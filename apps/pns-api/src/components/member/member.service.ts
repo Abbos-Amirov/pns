@@ -10,16 +10,24 @@ import { Message } from '../../libs/enums/common.enum';
 export class MemberService {
 
     constructor (@InjectModel('Member') private readonly memberModel: Model<Member>){}
-  public async signup( input: MemberInput): Promise<Member> {
-try{
-const result = await this.memberModel.create(input);
-return result
-    }catch(err){
-        console.log('ERROR' ,err);
-        throw new BadRequestException
-    }
-  }
-
+  
+    public async signup(input: MemberInput): Promise<Member> {
+        //TODO: Hash password
+         // input.memberPassword  = await this.authService.hashPassword(input.memberPassword)
+    
+       try{
+        const result = await this.memberModel.create(input)
+        //TODO: Authentication via TOKEN
+      // result.accessToken = await this.authService.createToken(result)
+       
+        
+        return result;
+       }catch(err){
+         console.log('Error, Service.model:' ,err.message);
+         throw new BadRequestException(Message.USED_MEMBER_NICK_OR_PHONE)
+       }
+      }
+    
 
 
  // >>>>>>>>> LOGIN <<<<<<<<<<<<<<<<
