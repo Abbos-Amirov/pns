@@ -10,7 +10,7 @@
   "monorepo": true,
   "root": "apps/pns-api",
   "projects": {
-    "pns": {
+    "pns-api": {
       "type": "application",
       "root": "apps/pns-api",
       "entryFile": "main",
