@@ -5,7 +5,7 @@ export enum MemberType {
   MEASURER = 'MEASURER',  // o‘lchov oladigan
   ADMIN = 'ADMIN',
   INSTALLER = 'INSTALLER', // o‘rnatadigan
-    CUSTOMER = 'CUSTOMER',   // mijoz
+  CUSTOMER = 'CUSTOMER',   // mijoz
   
 }
 
