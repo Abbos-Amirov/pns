@@ -5,6 +5,10 @@ import { LoginInput, MemberInput } from '../../libs/dto/member/member.input';
 import { BadRequestException, InternalServerErrorException, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { AuthMember } from '../auth/decorators/authMember.decorator';
+import { MemberType } from '../../libs/enums/member.enum';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { log } from 'console';
 
 @Resolver()
 export class MemberResolver {
@@ -38,6 +42,16 @@ export class MemberResolver {
     console.log('Mutation: updateMember');
     return  ` salom ${memberNick}`;
   }
+
+  @Roles(MemberType.USER,MemberType.MEASURER)
+  @UseGuards(RolesGuard)
+  @Query(() => String)
+  public async checkAuthRols(@AuthMember('') authMember: Member): Promise<string> {
+    
+    console.log('Query CheckAuthRolse');
+    return  ` salom ${authMember.memberNick}, you are ${authMember.memberType}, (memberId: ${authMember})`;
+  }
+
   @Query(() => String)
   public async getMember(): Promise<string> {
     console.log('Query: getMember');
@@ -48,10 +62,12 @@ export class MemberResolver {
    // >>>>>>>>> ADMIN <<<<<<<<<<<<<<<<
 
  // Authorization: ADMIN
- @Mutation (() => String )
- public async getAllMembesByAdmin(): Promise<string> {
-   return  this.memberService.getAllMembesByAdmi();
- }
+ @Roles(MemberType.ADMIN)
+ @UseGuards(RolesGuard)
+  @Mutation (() => String )
+  public async getAllMembesByAdmin(): Promise<string> {    
+    return  this.memberService.getAllMembesByAdmi();
+  }
 
  // Authorization: ADMIN
  @Mutation (() => String )
