@@ -119,7 +119,7 @@ export class MemberService {
       memberStatus: MemberStatus.ACTIVE,
     };
   
-    const sort: T = { [input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC,
+    const sort: T = { [input.sort ?? 'createdAt']: input?.direction ?? Direction.DESC,
     };
   
     if (text) {
@@ -146,7 +146,7 @@ export class MemberService {
   public async getAllMembersByAdmin(input: MembersInquiry): Promise<Members> {
     const { memberStatus, memberType, text } = input.search;
     const match: T = {};
-    const sort: T = { [input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC };
+    const sort: T = { [input.sort ?? 'createdAt']: input?.direction ?? Direction.DESC };
   
     if (memberStatus) match.memberStatus = memberStatus;
     if (memberType) match.memberType = memberType;
@@ -176,7 +176,7 @@ export class MemberService {
     return result[0];
   }
 
-  public async updateMembersByAdmin(input: MemberUpdate): Promise<Member> {
+  public async updateMemberByAdmin(input: MemberUpdate): Promise<Member> {
     const result = await this.memberModel.findOneAndUpdate({_id: input._id}, input, {new: true});
   if(!result) throw new InternalServerErrorException(Message.UPLOAD_FAILED)
     return result;;
