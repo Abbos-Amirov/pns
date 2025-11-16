@@ -2,6 +2,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { BadRequestException, Inject, Injectable, InternalServerErrorException, forwardRef } from '@nestjs/common';
 import { Model, ObjectId } from 'mongoose';
 import { MemberService } from '../member/member.service';
+import  moment from 'moment' 
 
 import { ProductInput } from '../../libs/dto/products/product.input';
 import { Message } from '../../libs/enums/common.enum';
@@ -10,6 +11,7 @@ import { ViewService } from '../view/view.service';
 import { StatisticModifier, T } from '../../libs/types/common';
 import { ViewGroup } from '../../libs/enums/view.enum';
 import { ProductStatus } from '../../libs/enums/product.enum';
+import { ProductUpdate } from '../../libs/dto/products/product.update';
 
 @Injectable()
 export class ProductService {
@@ -106,4 +108,39 @@ export class ProductService {
           ).exec();
       }
 
+
+      public async updateProduct(memberId: ObjectId, input: ProductUpdate): Promise<Product> {
+        let { productStatus, soldAt, deletedAt } = input;
+      
+        //  1. Qaysi property yangilanayotganini aniqlaymiz
+        const search = {
+          _id: input._id,
+          memberId: memberId,
+          productStatus: ProductStatus.ACTIVE,
+        };
+      
+        //  2. Agar status SOLD yoki DELETE bo‘lsa, vaqtni qo‘shamiz
+        if (productStatus === ProductStatus.OUT_OF_STOCK) soldAt = moment().toDate();
+        else if (productStatus === ProductStatus.DELETE) deletedAt = moment().toDate();
+      
+        //  3. Yangilash amali
+        const result = await this.productModel
+          .findOneAndUpdate(search, input, { new: true })
+          .exec();
+      
+        //  4. Agar yangilanmasa — xatolik
+        if (!result) throw new InternalServerErrorException(Message.UPDATE_FAILED);
+      
+        // 5. Agar property sotilgan yoki o‘chirilgan bo‘lsa — member statistikasi kamayadi
+        if (soldAt || deletedAt) {
+          await this.memberService.memberStatsEditor({
+            _id: memberId,
+            targetKey: 'memberProperties',
+            modifier: -1,
+          });
+        }
+      
+        //  6. Yangilangan propertyni qaytaramiz
+        return result;
+      }
 }

@@ -10,6 +10,7 @@ import {  ProductInput } from '../../libs/dto/products/product.input';
 import { Product } from '../../libs/dto/products/product';
 import { WithoutGuard } from '../auth/guards/without.guard';
 import { shapeIntoMongoObjectId } from '../../libs/config';
+import { ProductUpdate } from '../../libs/dto/products/product.update';
 
 
 @Resolver()
@@ -38,4 +39,19 @@ export class ProductResolver {
         return await this.productService.getProduct( memberId, propertyId)
         
    }
+
+   @Roles(MemberType.ADMIN)
+@UseGuards(RolesGuard)
+@Mutation(() => Product)
+public async updateProduct(
+  @Args('input') input: ProductUpdate,
+  @AuthMember('_id') memberId: ObjectId,
+): Promise<Product> {
+  console.log('Mutation: updateProperty');
+
+  // _id ni MongoDB ObjectId formatiga o'tkazamiz
+  input._id = shapeIntoMongoObjectId(input._id);
+  return await this.productService.updateProduct(memberId, input);
+}
+
 }

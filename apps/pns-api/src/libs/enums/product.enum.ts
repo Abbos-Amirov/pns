@@ -51,7 +51,7 @@ registerEnumType(ProductOpenType, { name: 'ProductOpenType' });
 export enum ProductStatus {
   ACTIVE = 'ACTIVE',        // Sotuvda bor
   OUT_OF_STOCK = 'OUT_OF_STOCK',  // Tugagan, mavjud emas
-  DISCONTINUED = 'DISCONTINUED',  // Ishlab chiqarish to‘xtatilgan
+  DELETE = 'DELETE',  // Ishlab chiqarish to‘xtatilgan
   CUSTOM_ORDER = 'CUSTOM_ORDER',  // Buyurtma asosida tayyorlanadi
 }
 registerEnumType(ProductStatus, { name: 'ProductStatus' });
