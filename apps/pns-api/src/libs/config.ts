@@ -13,6 +13,16 @@ export const getSerialForImage = (filename: string) => {
 	return uuidv4() + ext;
 };
 
+export const availableOptions = ['propertyBarter', 'propertyRent'];
+
+export const availableProductSorts = [
+	'createdAt',
+	'updatedAt',
+	'propertyLikes',
+	'propertyViews',
+	'propertyRank',
+	'propertyPrice',
+  ];
 
 export const availableAgentSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews'];
 export const availableMemberSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews'];

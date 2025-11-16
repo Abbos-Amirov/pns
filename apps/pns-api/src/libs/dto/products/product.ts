@@ -1,7 +1,12 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import type { ObjectId } from 'mongoose';
 import {
+  ProductCategory,
+  ProductColor,
+  ProductGlassType,
   ProductLocation,
+  ProductMaterial,
+  ProductOpenType,
   ProductStatus,
   ProductType,
 } from '../../enums/product.enum';
@@ -20,11 +25,17 @@ export class Product {
   @Field(() => ProductStatus)
   productStatus: ProductStatus;
 
-  @Field(() => ProductLocation)
+  @Field(() => ProductLocation,{ nullable: true } )
   productLocation: ProductLocation;
 
-  @Field(() => String)
+  @Field(() => String,{ nullable: true })
   productAddress: string;
+
+  @Field(() => Number)
+productHeight: number;
+
+@Field(() => Number)
+productWidth: number;
 
   @Field(() => String)
   productTitle: string;
@@ -32,37 +43,47 @@ export class Product {
   @Field(() => Number)
   productPrice: number;
 
-  @Field(() => Number)
-  productSquare: number;
+  @Field(() => ProductMaterial)
+  productMaterial: string;
 
-  @Field(() => Int)
-  productQuantity: number;
 
-  @Field(() => Int)
+  @Field(() => ProductGlassType)
+  productGlassType: string;
+
+  @Field(() => ProductOpenType)
+  productOpenType: string;
+
+
+  @Field(() => ProductCategory)
+  productCategory: string;
+
+  @Field(() => ProductColor)
+  productColor: string;
+
+  @Field(() => Int,{ nullable: true })
   productItems: number;
 
   @Field(() => Int)
   productViews: number;
 
-  @Field(() => Int)
+  @Field(() => Int,{ nullable: true })
   productLikes: number;
 
-  @Field(() => Int)
+  @Field(() => Int,{ nullable: true })
   productComments: number;
 
-  @Field(() => Int)
+  @Field(() => Int,{ nullable: true })
   productRank: number;
 
-  @Field(() => [String])
+  @Field(() => [String],{ nullable: true })
   productImages: string[];
 
   @Field(() => String, { nullable: true })
   productDesc?: string;
 
-  @Field(() => Boolean)
-  productBarter: boolean;
+  
 
-  @Field(() => Boolean)
+  @Field(() => Boolean,{ nullable: true })
   productRent: boolean;
 
   @Field(() => String)
