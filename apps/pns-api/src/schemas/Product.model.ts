@@ -57,7 +57,7 @@ const ProductSchema = new Schema(
     productStatus: {
       type: String,
       enum: ProductStatus,
-      default: ProductStatus.AVAILABLE, // AVAILABLE by default
+      default: ProductStatus.ACTIVE, // AVAILABLE by default
     },
 
     // === MAHSULOT NOMI === /

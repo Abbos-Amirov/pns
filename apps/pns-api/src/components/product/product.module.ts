@@ -8,7 +8,7 @@ import ProductSchema from '../../schemas/Product.model';
 import { MemberModule } from '../member/member.module';
 
 @Module({
-    imports: [MongooseModule.forFeature([{name:'Property', schema: ProductSchema}]
+    imports: [MongooseModule.forFeature([{name:'Product', schema: ProductSchema}]
     ),
     AuthModule,
      ViewModule,
