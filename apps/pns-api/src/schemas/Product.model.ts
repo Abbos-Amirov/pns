@@ -66,6 +66,18 @@ const ProductSchema = new Schema(
       required: true, // Masalan: "Aluminum Sliding Door 1200x2100"
     },
 
+    productheightRange: {
+			type: Number,
+			required: true,
+		},
+
+
+    productwidthRange: {
+			type: Number,
+			required: true,
+		},
+   
+
     // === TAVSIF (IZOH) === /
     productDesc: {
       type: String,

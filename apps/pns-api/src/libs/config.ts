@@ -1,11 +1,20 @@
 
 import { ObjectId } from 'bson';
 
+
+// =======================
+//  OBJECT ID HANDLER
+// =======================
 export const shapeIntoMongoObjectId = (target: any) => {
   return typeof target === 'string' ? new ObjectId(target) : target;
 };
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
+
+
+// =======================
+// IMAGE CONFIGURATION
+// =======================
 
 export const validMimeTypes = ['image/png', 'image/jpg', 'image/jpeg'];
 export const getSerialForImage = (filename: string) => {
@@ -13,18 +22,31 @@ export const getSerialForImage = (filename: string) => {
 	return uuidv4() + ext;
 };
 
-export const availableOptions = ['propertyBarter', 'propertyRent'];
+export const availableOptions = [ 'propertyRent'];
 
 export const availableProductSorts = [
 	'createdAt',
 	'updatedAt',
-	'propertyLikes',
-	'propertyViews',
-	'propertyRank',
-	'propertyPrice',
+	'productLikes',
+	'productViews',
+	'productRank',
+	'productPrice',
   ];
 
 export const availableAgentSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews'];
 export const availableMemberSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews'];
 
 export const availableCommentSorts = ['createdAt', 'updatedAt']
+
+
+// =======================
+//  MEMBER LOOKUP (AGGREGATION)
+// =======================
+export const lookupMember = {
+	$lookup: {
+	  from: 'members',        // qaysi collectiondan bog‘lanadi
+	  localField: 'memberId', // property ichidagi field
+	  foreignField: '_id',    // members collectionidagi field
+	  as: 'memberData',       // natijada qaytariladigan alias nomi
+	},
+  };

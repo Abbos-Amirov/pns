@@ -6,8 +6,8 @@ import { MemberType } from '../../libs/enums/member.enum';
 import { AuthMember } from '../auth/decorators/authMember.decorator';
 import type { ObjectId } from 'mongoose';
 import { UseGuards } from '@nestjs/common';
-import {  ProductInput } from '../../libs/dto/products/product.input';
-import { Product } from '../../libs/dto/products/product';
+import {  ProductInput, ProductsInquiry } from '../../libs/dto/products/product.input';
+import { Product, Products } from '../../libs/dto/products/product';
 import { WithoutGuard } from '../auth/guards/without.guard';
 import { shapeIntoMongoObjectId } from '../../libs/config';
 import { ProductUpdate } from '../../libs/dto/products/product.update';
@@ -52,6 +52,19 @@ public async updateProduct(
   // _id ni MongoDB ObjectId formatiga o'tkazamiz
   input._id = shapeIntoMongoObjectId(input._id);
   return await this.productService.updateProduct(memberId, input);
+}
+
+
+@UseGuards(WithoutGuard)
+@Query(() => Products)
+public async getProducts(
+  @Args('input') input: ProductsInquiry,
+  @AuthMember('_id') memberId: ObjectId,
+): Promise<Products> {
+  console.log('Query: getProperties');
+
+  // Service qatlamiga so‘rovni yuboramiz
+  return await this.productService.getProducts(memberId, input);
 }
 
 }
