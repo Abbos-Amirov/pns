@@ -1,4 +1,17 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { AuthModule } from '../auth/auth.module';
+import { ViewModule } from '../view/view.module';
+import { ProductResolver } from './product.resolver';
+import { ProductService } from './product.service';
+import ProductSchema from '../../schemas/Product.model';
 
-@Module({})
-export class ProductModule {}
+@Module({
+    imports: [MongooseModule.forFeature([{name:'Property', schema: ProductSchema}]
+    ),
+    AuthModule,
+     ViewModule
+    ],
+  providers: [ProductResolver, ProductService]
+})
+export class PropertyModule {}
