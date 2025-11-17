@@ -84,5 +84,16 @@ public async updateProductByAdmin(
   return await this.productService.updateProductByAdmin(input);
 }
 
+@Roles(MemberType.ADMIN)
+@UseGuards(RolesGuard)
+@Mutation(() => Product)
+public async removeProductByAdmin(
+  @Args('productId') input: string,
+): Promise<Product> {
+  console.log('Mutation: removeProductByAdmin');
+  const productId = shapeIntoMongoObjectId(input);
+  return await this.productService.removeProductByAdmin(productId);
+}
+
 
 }
