@@ -17,17 +17,6 @@ import { ProductUpdate } from '../../libs/dto/products/product.update';
 export class ProductResolver {
     constructor(private readonly productService: ProductService){}
 
-    @Roles(MemberType.ADMIN)
-  @UseGuards(RolesGuard)
-  @Mutation(() => Product)
-  public async createProduct(
-    @Args('input') input: ProductInput,
-    @AuthMember('_id') memberId: ObjectId,
-  ): Promise<Product> {
-    console.log('Mutation: createProperty');
-    input.memberId = memberId
-    return await this.productService.createProduct(input);
-  }
 
    // >>>>>>>>>>>>>>>>>>>  GET PROPERTY <<<<<<<<<<<<<<<<
 
@@ -40,19 +29,6 @@ export class ProductResolver {
         
    }
 
-   @Roles(MemberType.ADMIN)
-@UseGuards(RolesGuard)
-@Mutation(() => Product)
-public async updateProduct(
-  @Args('input') input: ProductUpdate,
-  @AuthMember('_id') memberId: ObjectId,
-): Promise<Product> {
-  console.log('Mutation: updateProperty');
-
-  // _id ni MongoDB ObjectId formatiga o'tkazamiz
-  input._id = shapeIntoMongoObjectId(input._id);
-  return await this.productService.updateProduct(memberId, input);
-}
 
 
 @UseGuards(WithoutGuard)
@@ -66,5 +42,47 @@ public async getProducts(
   // Service qatlamiga so‘rovni yuboramiz
   return await this.productService.getProducts(memberId, input);
 }
+
+// ADMIN //
+
+
+@Roles(MemberType.ADMIN)
+@UseGuards(RolesGuard)
+@Mutation(() => Product)
+public async createProduct(
+  @Args('input') input: ProductInput,
+  @AuthMember('_id') memberId: ObjectId,
+): Promise<Product> {
+  console.log('Mutation: createProperty');
+  input.memberId = memberId
+  return await this.productService.createProduct(input);
+}
+
+
+@Roles(MemberType.ADMIN)
+@UseGuards(RolesGuard)
+@Mutation(() => Product)
+public async updateProduct(
+  @Args('input') input: ProductUpdate,
+  @AuthMember('_id') memberId: ObjectId,
+): Promise<Product> {
+  console.log('Mutation: updateProperty');
+
+  // _id ni MongoDB ObjectId formatiga o'tkazamiz
+  input._id = shapeIntoMongoObjectId(input._id);
+  return await this.productService.updateProduct(memberId, input);
+}
+
+@Roles(MemberType.ADMIN)
+@UseGuards(RolesGuard)
+@Mutation(() => Product)
+public async updateProductByAdmin(
+  @Args('input') input: ProductUpdate,
+): Promise<Product> {
+  console.log('Mutation: updateProductByAdmin');
+  input._id = shapeIntoMongoObjectId(input._id);
+  return await this.productService.updateProductByAdmin(input);
+}
+
 
 }

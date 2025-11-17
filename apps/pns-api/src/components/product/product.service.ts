@@ -110,6 +110,79 @@ export class ProductService {
       }
 
 
+     
+
+
+
+      private shapeMatchQuery(match: T, input: ProductsInquiry): void {
+        const {
+          memberId,
+          locationList,
+          roomsList,
+          bedsList,
+          typeList,
+          heightRange,
+          periodsRange,
+          pricesRange,
+          widthRange,
+          options,
+          text,
+        } = input.search;
+      
+        // 🔹 Agar memberId bo‘lsa — uni Mongo ObjectId’ga aylantiramiz
+        if (memberId) match.memberId = shapeIntoMongoObjectId(memberId);
+      
+        // 🔹 Property location (joylashuv bo‘yicha filter)
+        if (locationList) match.propertyLocation = { $in: locationList };
+      
+        // 🔹 Xonalar soni
+        if (roomsList) match.propertyRooms = { $in: roomsList };
+      
+        // 🔹 Yotoq xonalar soni
+        if (bedsList) match.propertyBeds = { $in: bedsList };
+      
+        // 🔹 Property turi (Uy, Ofis, Bino va hok.)
+        if (typeList) match.propertyType = { $in: typeList };
+      
+        // 🔹 Narx oralig‘i
+        if (pricesRange)
+          match.propertyPrice = {
+            $gte: pricesRange.start,
+            $lte: pricesRange.end,
+          };
+      
+        // 🔹 Sana oralig‘i
+        if (periodsRange)
+          match.createdAt = {
+            $gte: periodsRange.start,
+            $lte: periodsRange.end,
+          };
+      
+        // 🔹 Maydon (kv.m) oralig‘i
+        if ( heightRange)
+          match.productheightRange = {
+            $gte:  heightRange.start,
+            $lte:  heightRange.end,
+          };
+          if (widthRange)
+          match.productwidthRange = {
+            $gte: widthRange.start,
+            $lte: widthRange.end,
+          };
+      
+        // 🔹 Qidiruv matni (title bo‘yicha)
+        if (text) match.propertyTitle = { $regex: new RegExp(text, 'i') };
+      
+        // 🔹 Qo‘shimcha optionlar (masalan: barter, rent)
+        if (options) {
+          match['$or'] = options.map((ele) => {
+            return { [ele]: true };
+          });
+        }
+      }
+
+      // ADIMN //
+
       public async updateProduct(memberId: ObjectId, input: ProductUpdate): Promise<Product> {
         let { productStatus, soldAt, deletedAt } = input;
       
@@ -190,72 +263,40 @@ export class ProductService {
       }
 
 
-
-
-      private shapeMatchQuery(match: T, input: ProductsInquiry): void {
-        const {
-          memberId,
-          locationList,
-          roomsList,
-          bedsList,
-          typeList,
-          heightRange,
-          periodsRange,
-          pricesRange,
-          widthRange,
-          options,
-          text,
-        } = input.search;
+      public async updateProductByAdmin(input: ProductUpdate): Promise<Product> {
+        let { productStatus, soldAt, deletedAt } = input;
       
-        // 🔹 Agar memberId bo‘lsa — uni Mongo ObjectId’ga aylantiramiz
-        if (memberId) match.memberId = shapeIntoMongoObjectId(memberId);
+        const search: T = {
+          _id: input._id,
+          productStatus: ProductStatus.ACTIVE,
+        };
       
-        // 🔹 Property location (joylashuv bo‘yicha filter)
-        if (locationList) match.propertyLocation = { $in: locationList };
+        // 🔹 Agar propertyStatus = SOLD bo‘lsa → sotilgan sana yoziladi
+        if (productStatus === ProductStatus.OUT_OF_STOCK) 
+          soldAt = moment().toDate();
       
-        // 🔹 Xonalar soni
-        if (roomsList) match.propertyRooms = { $in: roomsList };
+        // 🔹 Agar propertyStatus = DELETE bo‘lsa → o‘chirilgan sana yoziladi
+        else if (productStatus === ProductStatus.DELETE) 
+          deletedAt = moment().toDate();
       
-        // 🔹 Yotoq xonalar soni
-        if (bedsList) match.propertyBeds = { $in: bedsList };
+        // 🔹 Ma’lumotni yangilash
+        const result = await this.productModel
+          .findOneAndUpdate(search, input, { new: true })
+          .exec();
       
-        // 🔹 Property turi (Uy, Ofis, Bino va hok.)
-        if (typeList) match.propertyType = { $in: typeList };
+        // 🔹 Agar yangilash muvaffaqiyatsiz bo‘lsa
+        if (!result) 
+          throw new InternalServerErrorException(Message.UPDATE_FAILED);
       
-        // 🔹 Narx oralig‘i
-        if (pricesRange)
-          match.propertyPrice = {
-            $gte: pricesRange.start,
-            $lte: pricesRange.end,
-          };
-      
-        // 🔹 Sana oralig‘i
-        if (periodsRange)
-          match.createdAt = {
-            $gte: periodsRange.start,
-            $lte: periodsRange.end,
-          };
-      
-        // 🔹 Maydon (kv.m) oralig‘i
-        if ( heightRange)
-          match.productheightRange = {
-            $gte:  heightRange.start,
-            $lte:  heightRange.end,
-          };
-          if (widthRange)
-          match.productwidthRange = {
-            $gte: widthRange.start,
-            $lte: widthRange.end,
-          };
-      
-        // 🔹 Qidiruv matni (title bo‘yicha)
-        if (text) match.propertyTitle = { $regex: new RegExp(text, 'i') };
-      
-        // 🔹 Qo‘shimcha optionlar (masalan: barter, rent)
-        if (options) {
-          match['$or'] = options.map((ele) => {
-            return { [ele]: true };
+        // 🔹 Agar property o‘chirilgan yoki sotilgan bo‘lsa, member statistikasi kamayadi
+        if (soldAt || deletedAt) {
+          await this.memberService.memberStatsEditor({
+            _id: result.memberId,
+            targetKey: 'memberProduct',
+            modifier: -1,
           });
         }
+      
+        return result;
       }
 }

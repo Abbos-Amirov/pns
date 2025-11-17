@@ -59,6 +59,7 @@ productWidth: number;
   @Field(() => String)
   productColor:string;
 
+
   
 
 

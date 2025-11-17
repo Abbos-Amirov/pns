@@ -31,6 +31,15 @@ export class ProductUpdate {
   @Field(() => ProductLocation, { nullable: true })
   productLocation?: ProductLocation;
 
+
+  @IsOptional()
+@Field(() => Number,{ nullable: true })
+productHeight?: number;
+
+@IsOptional()
+@Field(() => Number,{ nullable: true })
+productWidth?: number;
+
   // To‘liq manzil
   @IsOptional()
   @Length(3, 100)

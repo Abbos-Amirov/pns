@@ -15,7 +15,7 @@ import { MeLiked } from '../like/like';
 import { Member, TotalCounter } from '../member/member';
 
 @ObjectType()
-export class Product {
+export class  Product {
   @Field(() => String)
   _id: ObjectId;
 
@@ -32,10 +32,10 @@ export class Product {
   productAddress: string;
 
   @Field(() => Number)
-productHeight: number;
+ productHeight: number;
 
 @Field(() => Number)
-productWidth: number;
+ productWidth: number;
 
   @Field(() => String)
   productTitle: string;
