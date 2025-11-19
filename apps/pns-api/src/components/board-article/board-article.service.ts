@@ -88,18 +88,6 @@ export class BoardArticleService {
       // >>>>>>>>>>>>>>>>>>>>>>  BOARD ARTICLA STATS EDITOR <<<<<<<<<<<<<<<<<
     
     
-      public async boardArticleStatsEditor(
-        input: StatisticModifier
-      ): Promise<BoardArticle | null> {
-        const { _id, targetKey, modifier } = input;
-        return await this.boardArticleModel
-          .findByIdAndUpdate(
-            { _id },
-            { $inc: { [targetKey]: modifier } },
-            { new: true }
-          )
-          .exec();
-      }
     
       public async updateBoardArticle(
         memberId: ObjectId,
@@ -210,5 +198,77 @@ export class BoardArticleService {
       
         return result[0];
       }
+
+
+
+
+
+/** >>>>>>>>>>>>>>>>>>>>>> UpdateBoardArticleByAdmin  <<<<<<<<<<<<<<<<<<<<< */
+
+  public async updateBoardArticleByAdmin(
+    input: BoardArticleUpdate
+  ): Promise<BoardArticle> {
+    const { _id, articleStatus } = input;
+  
+    const result = await this.boardArticleModel
+      .findOneAndUpdate(
+        { _id, articleStatus: BoardArticleStatus.ACTIVE },
+        input,
+        { new: true }
+      )
+      .exec();
+  
+    if (!result)
+      throw new InternalServerErrorException(Message.UPDATE_FAILED);
+  
+    if (articleStatus === BoardArticleStatus.DELETE) {
+      await this.memberService.memberStatsEditor({
+        _id: result.memberId,
+        targetKey: "memberArticles",
+        modifier: -1,
+      });
+    } else if (articleStatus === BoardArticleStatus.ACTIVE) {
+      await this.memberService.memberStatsEditor({
+        _id: result.memberId,
+        targetKey: "memberArticles",
+        modifier: 1,
+      });
+    }
+  
+    return result;
+  }
+
+      public async removeBoardArticleByAdmin(
+        articleId: ObjectId
+      ): Promise<BoardArticle> {
+        const search = { _id: articleId,  };
+      
+        const result = await this.boardArticleModel
+          .findOneAndDelete(search)
+          .exec();
+      
+        if (!result)
+          throw new InternalServerErrorException(Message.REMOVE_FAILED);
+      
+        return result;
+      }
+    
+    
+      // >>>>>>>>>>>>>>>>>>>>>>  BOARD ARTICLA STATS EDITOR <<<<<<<<<<<<<<<<<
+    
+    
+      public async boardArticleStatsEditor(
+        input: StatisticModifier
+      ): Promise<BoardArticle | null> {
+        const { _id, targetKey, modifier } = input;
+        return await this.boardArticleModel
+          .findByIdAndUpdate(
+            { _id },
+            { $inc: { [targetKey]: modifier } },
+            { new: true }
+          )
+          .exec();
+      }
+    
     
 }
