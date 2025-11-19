@@ -77,7 +77,7 @@ export class ProductService {
           // 🔹 View yozuvini saqlaymiz (agar bu foydalanuvchi ilgari ko‘rmagan bo‘lsa)
           const newView = await this.viewService.recordView(viewInput);
           if (newView) {
-            await this.propertyStatsEditor({
+            await this.productStatsEditor({
               _id: productId,
               targetKey: 'propertyViews',
               modifier: 1,
@@ -97,7 +97,7 @@ export class ProductService {
       }
       
       // 🧩 Statistikani yangilovchi yordamchi funksiya
-      public async propertyStatsEditor(input: StatisticModifier): Promise<Product | null> {
+      public async productStatsEditor(input: StatisticModifier): Promise<Product | null> {
         const { _id, targetKey, modifier } = input;
         
       
