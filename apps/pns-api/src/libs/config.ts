@@ -33,6 +33,8 @@ export const availableProductSorts = [
 	'productPrice',
   ];
 
+  
+
 export const availableAgentSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews'];
 export const availableMemberSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews'];
 
