@@ -48,7 +48,7 @@ public async getProducts(
 @UseGuards(AuthGuard)
  @Mutation(() => Product)
  public async likeTargetProduct(
-   @Args('memberId') input: string,
+   @Args('productId') input: string,
    @AuthMember('_id') memberId: ObjectId,
  ): Promise<Product> {
    console.log('Mutation: likeTargetProduct');
