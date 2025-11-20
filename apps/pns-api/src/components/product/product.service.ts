@@ -91,7 +91,15 @@ export class ProductService {
       
           // //  Meliked (ya’ni yoqtirganmi) qismi keyin yoziladi
           // // meliked
+
+          const likeInput = {memberId: memberId, likeRefId: productId, likeGroup: LikeGroup.PRODUCT};
+          targetProduct.meLiked = await this.likeService.checkLikeExistence(likeInput)
+          console.log(" targetProperty.meLiked", targetProduct.meLiked);
+          
+          
         }
+
+        
       
         //  Member haqidagi ma’lumotni ham qo‘shamiz
         targetProduct.memberData = await this.memberService.getMember(null, targetProduct.memberId);

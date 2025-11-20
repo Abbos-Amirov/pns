@@ -83,7 +83,15 @@ export class BoardArticleService {
                 targetKey: 'articleViews',
                 modifier: 1
               });
+              targetBoardArticle.articleViews++
            }
+
+
+       const likeInput = {memberId: memberId, likeRefId: articleId, likeGroup: LikeGroup.PRODUCT};
+       targetBoardArticle.meLiked = await this.likeService.checkLikeExistence(likeInput)
+
+       console.log("targetBoardArticle.meLiked",targetBoardArticle.meLiked);
+       
         }
       
         return targetBoardArticle;
