@@ -188,7 +188,7 @@ export class MemberService {
     const target = await this.memberModel.findOne({
       _id: likeRefId,
       memberStatus: MemberStatus.ACTIVE,
-    });
+    }).exec()
   
     if (!target)
       throw new InternalServerErrorException(Message.NO_DATA_FOUND);

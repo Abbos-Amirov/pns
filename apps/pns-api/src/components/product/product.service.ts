@@ -13,6 +13,9 @@ import { ViewGroup } from '../../libs/enums/view.enum';
 import { ProductStatus } from '../../libs/enums/product.enum';
 import { ProductUpdate } from '../../libs/dto/products/product.update';
 import { lookupMember, shapeIntoMongoObjectId } from '../../libs/config';
+import { LikeService } from '../like/like.service';
+import { LikeInput } from '../../libs/dto/like/like.input';
+import { LikeGroup } from '../../libs/enums/like.enum';
 
 @Injectable()
 export class ProductService {
@@ -23,6 +26,7 @@ export class ProductService {
     // Agar circular dependency bo‘lmasa:
     private readonly memberService: MemberService,
     private viewService: ViewService,
+    private likeService: LikeService,
 
     // Agar circular dependency bo‘lsa, unda bunday:
     // @Inject(forwardRef(() => MemberService))
@@ -179,6 +183,41 @@ export class ProductService {
             return { [ele]: true };
           });
         }
+      }
+
+
+      public async likeTargetProduct(
+        memberId: ObjectId,
+        likeRefId: ObjectId,
+      ): Promise<Product> {
+        const target = await this.productModel.findOne({
+          _id: likeRefId,
+          productStatus: ProductStatus.ACTIVE,
+        }).exec()
+      
+        if (!target)
+          throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+      
+        const input: LikeInput = {
+          memberId: memberId,
+          likeRefId: likeRefId,
+          likeGroup: LikeGroup.PRODUCT,
+        };
+      
+        // LIKE TOGGLE via like modules
+        const modifier: number = await this.likeService.toggleLike(input)
+        const result = await this.productStatsEditor({
+          _id: likeRefId,
+          targetKey: 'productLikes',
+          modifier: modifier,
+        });
+      
+        if (!result)
+          throw new InternalServerErrorException(
+            Message.SOMETHING_WENT_WRONG,
+          );
+      
+        return result;
       }
 
       // ADIMN //

@@ -11,6 +11,7 @@ import { Product, Products } from '../../libs/dto/products/product';
 import { WithoutGuard } from '../auth/guards/without.guard';
 import { shapeIntoMongoObjectId } from '../../libs/config';
 import { ProductUpdate } from '../../libs/dto/products/product.update';
+import { AuthGuard } from '../auth/guards/auth.guard';
 
 
 @Resolver()
@@ -42,6 +43,20 @@ public async getProducts(
   // Service qatlamiga so‘rovni yuboramiz
   return await this.productService.getProducts(memberId, input);
 }
+
+
+@UseGuards(AuthGuard)
+ @Mutation(() => Product)
+ public async likeTargetProduct(
+   @Args('memberId') input: string,
+   @AuthMember('_id') memberId: ObjectId,
+ ): Promise<Product> {
+   console.log('Mutation: likeTargetProduct');
+ 
+   const likeRefId = shapeIntoMongoObjectId(input);
+ 
+   return await this.productService.likeTargetProduct(memberId, likeRefId);
+ }
 
 // ADMIN //
 
