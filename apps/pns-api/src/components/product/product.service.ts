@@ -4,7 +4,7 @@ import { Model, ObjectId } from 'mongoose';
 import { MemberService } from '../member/member.service';
 import  moment from 'moment' 
 
-import { ProductInput, ProductsInquiry } from '../../libs/dto/products/product.input';
+import { OrdinaryInquiry, ProductInput, ProductsInquiry } from '../../libs/dto/products/product.input';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import { Product, Products } from '../../libs/dto/products/product';
 import { ViewService } from '../view/view.service';
@@ -308,6 +308,12 @@ export class ProductService {
           throw new InternalServerErrorException(Message.NO_DATA_FOUND);
       
         return result[0];
+      }
+
+
+      public async getFavorites(memberId: ObjectId, input: OrdinaryInquiry): Promise<Products>{
+        const natija = await this.likeService.getFavoriteProduct( memberId, input)
+        return natija
       }
 
 

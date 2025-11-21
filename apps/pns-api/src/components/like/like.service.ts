@@ -1,9 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import { Like, MeLiked } from '../../libs/dto/like/like';
 import { LikeInput } from '../../libs/dto/like/like.input';
 import { Message } from '../../libs/enums/common.enum';
+import { lookupFavorite } from '../../libs/config';
+import { Product, Products } from '../../libs/dto/products/product';
+import { OrdinaryInquiry } from '../../libs/dto/products/product.input';
+import { LikeGroup } from '../../libs/enums/like.enum';
 
 @Injectable()
 export class LikeService {
@@ -37,5 +41,52 @@ export class LikeService {
     const result = await this.likeModel.findOne({memberId: memberId, likeRefId: likeRefId}).exec();
     return result ? [{memberId: memberId, likeRefId: likeRefId, myFavorite: true}]: [];
   }
+
+
+  public async getFavoriteProduct( memberId: ObjectId, input: OrdinaryInquiry): Promise<Products> {
+    const { page, limit } = input;
+    console.log("page", page,limit);
+    const match = { likeGroup: LikeGroup.PRODUCT, memberId: memberId };
+
+    console.log("mache",match);
+    
+  
+    const data = await this.likeModel
+      .aggregate([
+        { $match: match },
+        { $sort: { updatedAt: -1 } },
+        {
+          $lookup: {
+            from: 'products',
+            localField: 'likeRefId',
+            foreignField: '_id',
+            as: 'favoriteProduct',
+          },
+        },
+        { $unwind: '$favoriteProduct' },
+        {
+          $facet: {
+            list: [
+              { $skip: (page - 1) * limit },
+              { $limit: limit },
+              lookupFavorite,
+              { $unwind: '$favoriteProduct.memberData'},
+              
+            ],
+            metaCounter: [{ $count: 'total'}],
+          },
+        },
+       
+      ])
+      .exec();
+  
+    console.log('data:', data);
+    const result: Products = {list: [], metaCounter: data[0].metaCounter }
+    result.list = data[0].list.map((ele) => ele.favoriteProduct);
+    console.log('result:', result);
+
+    return result;
+  }
+
         
 }

@@ -110,6 +110,12 @@ export class  Product {
 
   @Field(() => Member, { nullable: true })
   memberData?: Member;
+
+  @Field(() => [Product])
+  list: Product[];
+
+  @Field(() => [TotalCounter], { nullable: true })
+  metaCounter: TotalCounter[];
 }
 
 @ObjectType()

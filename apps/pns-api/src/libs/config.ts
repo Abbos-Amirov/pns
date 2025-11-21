@@ -148,3 +148,11 @@ export const lookupMember = {
 		  }
 		};
 		};
+		export const lookupFavorite = {
+			$lookup: {
+			  from: 'members',
+			  localField: 'favoriteProduct.memberId',
+			  foreignField: '_id',
+			  as: 'favoriteProduct.memberData',
+			},
+		  };
