@@ -58,6 +58,17 @@ public async getProducts(
    return await this.productService.likeTargetProduct(memberId, likeRefId);
  }
 
+
+@UseGuards(AuthGuard)
+@Query(() => Products)
+public async getVisited(
+  @Args('input') input: OrdinaryInquiry,
+  @AuthMember('_id') memberId: ObjectId,
+): Promise<Products> {
+  console.log('Query: getVisited');
+  return await this.productService.getVisiteds(memberId, input);
+}
+
  @UseGuards(AuthGuard)
 @Query(() => Products)
 public async getFavorites(

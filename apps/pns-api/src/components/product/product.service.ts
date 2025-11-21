@@ -228,6 +228,8 @@ export class ProductService {
         return result;
       }
 
+
+      
       // ADIMN //
 
       public async updateProduct(memberId: ObjectId, input: ProductUpdate): Promise<Product> {
@@ -314,6 +316,10 @@ export class ProductService {
       public async getFavorites(memberId: ObjectId, input: OrdinaryInquiry): Promise<Products>{
         const natija = await this.likeService.getFavoriteProduct( memberId, input)
         return natija
+      }
+
+      public async getVisiteds(memberId: ObjectId, input: OrdinaryInquiry): Promise<Products>{
+        return await this.viewService.getVisetedProducts( memberId, input)
       }
 
 

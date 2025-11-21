@@ -45,12 +45,9 @@ export class LikeService {
 
   public async getFavoriteProduct( memberId: ObjectId, input: OrdinaryInquiry): Promise<Products> {
     const { page, limit } = input;
-    console.log("page", page,limit);
     const match = { likeGroup: LikeGroup.PRODUCT, memberId: memberId };
-
-    console.log("mache",match);
     
-  
+    
     const data = await this.likeModel
       .aggregate([
         { $match: match },
@@ -83,7 +80,7 @@ export class LikeService {
     console.log('data:', data);
     const result: Products = {list: [], metaCounter: data[0].metaCounter }
     result.list = data[0].list.map((ele) => ele.favoriteProduct);
-    console.log('result:', result);
+   
 
     return result;
   }
