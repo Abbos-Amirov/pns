@@ -27,11 +27,11 @@ export class PnsBatchController {
   }
 
   @Cron('10 * * * * *', { name: BATCH_TOP_PRODUCTS })
-  public async batchProperties() {
+  public async batchProducts() {
     try {
       this.logger['context'] = BATCH_TOP_PRODUCTS;
       this.logger.debug('EXECUTED!');
-      await this.pnsBatchService.batchProperties();
+      await this.pnsBatchService.batchTopProducts();
     } catch (err) {
       this.logger.error(err);
     }
