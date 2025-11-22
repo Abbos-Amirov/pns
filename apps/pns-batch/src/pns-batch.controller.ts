@@ -15,7 +15,7 @@ export class PnsBatchController {
     this.logger.debug('BATCH SERVER READY!');
   }
 
-  @Cron('00 * * * * *', { name: BATCH_ROLLBACK })
+  @Cron('00 00 01 * * *', { name: BATCH_ROLLBACK })
   public async batchRollback() {
     try {
       this.logger['context'] = BATCH_ROLLBACK;
@@ -26,7 +26,7 @@ export class PnsBatchController {
     }
   }
 
-  @Cron('10 * * * * *', { name: BATCH_TOP_PRODUCTS })
+  @Cron('20 00 01 * * *', { name: BATCH_TOP_PRODUCTS })
   public async batchProducts() {
     try {
       this.logger['context'] = BATCH_TOP_PRODUCTS;
@@ -37,12 +37,12 @@ export class PnsBatchController {
     }
   }
 
-  @Cron('15 * * * * *', { name: BATCH_TOP_AGENTS })
+  @Cron('40 00 01* * *', { name: BATCH_TOP_AGENTS })
   public async batchAgents() {
     try {
       this.logger['context'] = BATCH_TOP_AGENTS;
       this.logger.debug('EXECUTED!');
-      await this.pnsBatchService.batchAgents();
+      await this.pnsBatchService.batchTopAgents();
     } catch (err) {
       this.logger.error(err);
     }

@@ -53,7 +53,7 @@ export class PnsBatchService {
   await Promise.all(promisedList);
   }
 
-  public async batchAgents(): Promise<void> {
+  public async batchTopAgents(): Promise<void> {
 
 
     const agents: Member[] = await this.memberModel
