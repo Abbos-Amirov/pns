@@ -12,6 +12,8 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { UseGuards } from '@nestjs/common';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { MemberType } from '../../libs/enums/member.enum';
+import { LocationUpdateInput } from '../../libs/dto/location/location.update';
+import { shapeIntoMongoObjectId } from '../../libs/config';
 
 @Resolver(() => Location)  // <-- MUHIM
 export class LocationResolver {
@@ -30,4 +32,20 @@ export class LocationResolver {
 
     return await this.locationService.createLocation(input);
   }
+
+
+  @Roles(MemberType.MEASURER)
+  @UseGuards(RolesGuard)
+  @Mutation(() => Location)
+  public async updateLocation(
+    @Args('input') input: LocationUpdateInput,
+    @AuthMember('_id') memberId: ObjectId,
+  ): Promise<Location> {
+    console.log('Mutation: updateLocation');
+
+    input._id = shapeIntoMongoObjectId(input._id);
+
+    return await this.locationService.updateLocation(memberId, input);
+  }
+
 }

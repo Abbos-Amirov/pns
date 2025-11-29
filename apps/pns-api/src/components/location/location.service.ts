@@ -1,6 +1,6 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 
 import { Member } from '../../libs/dto/member/member';
 import * as fs from 'fs';
@@ -11,6 +11,7 @@ import { MemberService } from '../member/member.service';
 import { ViewService } from '../view/view.service';
 import { LikeService } from '../like/like.service';
 import { Message } from '../../libs/enums/common.enum';
+import { LocationUpdateInput } from '../../libs/dto/location/location.update';
 
 @Injectable()
 export class LocationService {
@@ -23,9 +24,7 @@ export class LocationService {
 
   ) {}
 
-  // ============ IMAGE UPLOAD ============
   
-
   // ============ CREATE ONLY ============
   public async createLocation(input: CreateLocationInput): Promise<Location> {
     const{createdBy} = input;
@@ -48,4 +47,30 @@ export class LocationService {
       throw new BadRequestException(Message.CREATE_FAILED);
     }
   }
+
+  public async updateLocation(
+    memberId: ObjectId,
+    input: LocationUpdateInput,
+  ): Promise<any> {
+    const search = {
+      _id: input._id,
+      createdBy: memberId, // faqat o‘z yaratgan joyni update qilsin
+    };
+
+    try {
+      const result = await this.locationModel
+        .findOneAndUpdate(search, input, { new: true })
+        .exec();
+
+      if (!result) {
+        throw new InternalServerErrorException(Message.UPDATE_FAILED);
+      }
+
+      return result;
+    } catch (err: any) {
+      console.log('Error, Location.update:', err.message);
+      throw new InternalServerErrorException(Message.UPDATE_FAILED);
+    }
+  }
+
 }
