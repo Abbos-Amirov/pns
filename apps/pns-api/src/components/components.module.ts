@@ -8,6 +8,7 @@ import { ViewModule } from './view/view.module';
 import { FollowModule } from './follow/follow.module';
 import { BoardArticleModule } from './board-article/board-article.module';
 import { SocketModule } from './socket/socket.module';
+import { LocationModule } from './location/location.module';
 
 
 @Module({
@@ -18,6 +19,6 @@ import { SocketModule } from './socket/socket.module';
      LikeModule,
      ViewModule,
      FollowModule, 
-     BoardArticleModule, SocketModule],
+     BoardArticleModule, SocketModule, LocationModule],
 })
 export class ComponentsModule {}
