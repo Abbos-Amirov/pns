@@ -27,7 +27,7 @@ export class CreateLocationInput {
   @Field(() => [GraphQLUpload], { nullable: true })
   images?: Promise<FileUpload>[]; // Bir nechta rasm yuklash
 
-  createdBy: ObjectId;
+  memberId: ObjectId;
 }
 
 @InputType()

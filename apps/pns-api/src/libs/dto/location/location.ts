@@ -1,5 +1,8 @@
 import { Field, Float, ObjectType } from '@nestjs/graphql';
 import { LocationType } from '../../../libs/enums/location.enum';
+import { MeLiked } from '../like/like';
+import { Member } from '../member/member';
+import type { ObjectId } from 'mongoose';
 
 @ObjectType()
 export class Location {
@@ -23,16 +26,28 @@ export class Location {
 
   @Field(() => Float)
   longitude: number;
+  @Field(() => Number)
+  locationViews: number;
+  
+  @Field(() => Number)
+  locationLikes: number;
 
   @Field(() => [String])
   images: string[];
 
   @Field(() => String)
-  createdBy: string;
+  memberId: ObjectId;
 
   @Field()
   createdAt: Date;
 
   @Field()
   updatedAt: Date;
+
+  @Field(() => [MeLiked], )
+  meLiked?: MeLiked[];
+
+  @Field(() => Member, { nullable: true })
+  memberData?: Member;
+
 }

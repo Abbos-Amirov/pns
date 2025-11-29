@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
 import { LocationService } from './location.service';
 
 import { AuthMember } from '../auth/decorators/authMember.decorator';
@@ -14,6 +14,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { MemberType } from '../../libs/enums/member.enum';
 import { LocationUpdateInput } from '../../libs/dto/location/location.update';
 import { shapeIntoMongoObjectId } from '../../libs/config';
+import { WithoutGuard } from '../auth/guards/without.guard';
 
 @Resolver(() => Location)  // <-- MUHIM
 export class LocationResolver {
@@ -28,10 +29,23 @@ export class LocationResolver {
   ): Promise<Location> {
     console.log('Mutation: createLocation');
 
-    input.createdBy = memberId;  // <-- memberId shu yerga saqlanadi
+    input.memberId = memberId;  // <-- memberId shu yerga saqlanadi
 
     return await this.locationService.createLocation(input);
   }
+
+  @UseGuards(WithoutGuard)
+@Query(() => Location)
+public async getLocation(
+  @Args('locationId') input: string,
+  @AuthMember('_id') memberId: ObjectId,
+): Promise<Location> {
+  console.log("Query: getLocation");
+
+  const locationId = shapeIntoMongoObjectId(input);
+
+  return await this.locationService.getLocation(memberId, locationId);
+}
 
 
   @Roles(MemberType.MEASURER)

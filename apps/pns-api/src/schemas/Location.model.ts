@@ -19,9 +19,23 @@ const LocationSchema = new Schema(
       required: false,
     },
 
+    
+
+locationViews: {
+  type: Number,
+  default: 0,
+  required: true,
+},
+
     locationType: {
       type: String,
       enum: LocationType,
+      required: true,
+    },
+
+    locationLikes: {
+      type: Number,
+      default: 0,
       required: true,
     },
 
@@ -41,11 +55,15 @@ const LocationSchema = new Schema(
       required: false,
     },
 
-    createdBy: {
+    memberId: {
       type: Schema.Types.ObjectId,
-      ref: 'Member',
       required: true,
+      ref: 'Member', // ishlab chiqargan yoki o‘lchov olgan a’zoni bildiradi
     },
+    
+  
+
+    
   },
   {
     timestamps: true,
