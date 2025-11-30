@@ -1,11 +1,17 @@
 import mongoose, { Schema } from 'mongoose';
-import { NoticeCategory, NoticeStatus } from '../libs/enums/notice.enum';
+import { NoticeCategory, NoticeCategoryType, NoticeStatus } from '../libs/enums/notice.enum';
 
 const NoticeSchema = new Schema(
 	{
 		noticeCategory: {
 			type: String,
 			enum: NoticeCategory,
+			required: true,
+		},
+
+		noticeCategoryType: {
+			type: String,
+			enum: NoticeCategoryType,
 			required: true,
 		},
 

@@ -4,15 +4,27 @@ import { MemberType } from '../../libs/enums/member.enum';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UseGuards } from '@nestjs/common';
-import { Notice } from '../../libs/dto/cs/notice.output';
-import { CreateNoticeInput, UpdateNoticeInput } from '../../libs/dto/cs/notice.input';
+import { Notice, NoticeListResponse } from '../../libs/dto/cs/notice.output';
+import { CreateNoticeInput, NoticeInquiry, UpdateNoticeInput } from '../../libs/dto/cs/notice.input';
 import { AuthMember } from '../auth/decorators/authMember.decorator';
 import type { ObjectId } from 'mongoose';
+import { WithoutGuard } from '../auth/guards/without.guard';
 
 @Resolver()
 export class CsResolver {
 
     constructor(private readonly csService: CsService) {}
+
+
+    @UseGuards(WithoutGuard)
+    @Query(() => NoticeListResponse)
+    async getNoticeList(
+      @Args('input') input: NoticeInquiry,
+    ): Promise< NoticeListResponse> {
+        console.log("getNoticeList: come Here");
+        
+      return this.csService.getNoticeList(input);
+    }
 
 
 

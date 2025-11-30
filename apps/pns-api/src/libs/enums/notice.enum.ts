@@ -18,15 +18,15 @@ registerEnumType(NoticeStatus, {
 	name: 'NoticeStatus',
 });
 export enum NoticeCategoryType {
-	PROPERTY = 'PROPERTY',           // Property
-	PAYMENT = 'PAYMENT',             // Payment
-	LOCATION = 'LOCATION',  
-	FOR_BUYERS = 'FOR_BUYERS',       // For Buyers
-	FOR_AGENTS = 'FOR_AGENTS',       // For Agents
-	MEMBERSHIP = 'MEMBERSHIP',       // Membership
-	COMMUNITY = 'COMMUNITY',         // Community
-	OTHER = 'OTHER',                 // Other
-}  
+	PRODUCT = 'PRODUCT',                 // Eshik/deraza mahsulotlari haqida e’lon
+	LOCATION = 'LOCATION',               // Shaharlar/filiallar haqida e’lon
+	MEASURER = 'MEASURER',               // Razmer oluvchilar uchun e’lon
+	INSTALLER = 'INSTALLER',             // O‘rnatadigan ustalar uchun e’lon
+	MEMBERS = 'MEMBERS',                 // Oddiy userlar uchun e’lon
+	SYSTEM = 'SYSTEM',                   // Platforma yangilanishlari / umumiy e’lonlar
+	COMMUNITY = 'COMMUNITY',             // Foydalanuvchilar uchun umumiy postlar
+	OTHER = 'OTHER',                     // Boshqa turdagi e’lonlar
+  }
 registerEnumType(NoticeCategoryType, {
 	name: 'NoticeCategoryType',
 });

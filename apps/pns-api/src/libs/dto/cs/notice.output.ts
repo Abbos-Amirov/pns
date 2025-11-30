@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { ObjectType, Field, ID, Int } from '@nestjs/graphql';
 import { NoticeCategory, NoticeCategoryType, NoticeStatus } from '../../enums/notice.enum';
 
 
@@ -29,4 +29,13 @@ export class Notice {
 
   @Field()
   updatedAt: Date;
+}
+
+@ObjectType()
+export class NoticeListResponse {
+  @Field(() => [Notice])
+  list: Notice[];
+
+  @Field(() => Int)
+  total: number;
 }
