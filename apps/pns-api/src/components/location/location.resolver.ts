@@ -74,4 +74,23 @@ public async getLocations(
     return await this.locationService.updateLocation(memberId, input);
   }
 
+
+
+
+  // ADMIN
+
+
+  @Roles(MemberType.ADMIN, MemberType.MEASURER)
+@UseGuards(RolesGuard)
+@Mutation(() => Location)
+public async removeLocationByAdmin(
+  @Args('locationId') input: string,
+): Promise<Location> {
+  console.log('Mutation: removeLocationByAdmin');
+
+  const locationId = shapeIntoMongoObjectId(input);
+
+  return await this.locationService.removeLocationByAdmin(locationId);
+}
+
 }

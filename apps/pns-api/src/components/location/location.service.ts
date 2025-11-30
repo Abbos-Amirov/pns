@@ -177,6 +177,23 @@ export class LocationService {
   }
 
 
+  // ADMIN
+  public async removeLocationByAdmin(locationId: ObjectId): Promise<Location> {
+    const search: T = { 
+      _id: locationId,
+    };
+  
+    const result = await this.locationModel
+      .findOneAndDelete(search)
+      .exec();
+  
+    if (!result)
+      throw new InternalServerErrorException(Message.REMOVE_FAILED);
+  
+    return result;
+  }
+
+
   public async locationStatsEditor(input: StatisticModifier): Promise<any | null> {
     const { _id, targetKey, modifier } = input;
   
@@ -188,6 +205,9 @@ export class LocationService {
       )
       .exec();
   }
+
+
+  
 
 
   private shapeLocationMatchQuery(match: T, input: LocationsInquiry) {

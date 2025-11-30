@@ -26,10 +26,10 @@ export class Location {
 
   @Field(() => Float)
   longitude: number;
-  @Field(() => Number)
+  @Field(() => Number,{nullable: true})
   locationViews: number;
   
-  @Field(() => Number)
+  @Field(() => Number, {nullable: true})
   locationLikes: number;
 
   @Field(() => [String])
