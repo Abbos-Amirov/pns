@@ -16,6 +16,7 @@ import { LocationUpdateInput } from '../../libs/dto/location/location.update';
 import { shapeIntoMongoObjectId } from '../../libs/config';
 import { WithoutGuard } from '../auth/guards/without.guard';
 import { AuthGuard } from '../auth/guards/auth.guard';
+import { OrdinaryInquiry } from '../../libs/dto/products/product.input';
 
 @Resolver(() => Location)  // <-- MUHIM
 export class LocationResolver {
@@ -86,6 +87,16 @@ public async getFavoriteLocations(
 ): Promise<Locations> {
   console.log('Query: getFavoriteLocations');
   return await this.locationService.getFavoriteLocations(memberId, input);
+}
+
+@UseGuards(AuthGuard)
+@Query(() => Locations)
+public async getVisitedLocations(
+  @Args('input') input: OrdinaryInquiry,
+  @AuthMember('_id') memberId: ObjectId,
+): Promise<Locations> {
+  console.log('Query: getVisitedLocations');
+  return await this.locationService.getVisitedLocations(memberId, input);
 }
 
 @UseGuards(AuthGuard)

@@ -17,6 +17,7 @@ import { StatisticModifier, T } from '../../libs/types/common';
 import { ViewGroup } from '../../libs/enums/view.enum';
 import { lookupAuthMemberLiked, lookupMember } from '../../libs/config';
 import { LikeInput } from '../../libs/dto/like/like.input';
+import { OrdinaryInquiry } from '../../libs/dto/products/product.input';
 
 @Injectable()
 export class LocationService {
@@ -187,6 +188,15 @@ export class LocationService {
     console.log(">>>>>>>>resalt",result);
     
     return result;
+  }
+
+
+  public async getVisitedLocations(
+    memberId: ObjectId,
+    input: OrdinaryInquiry
+  ): Promise<Locations> {
+  
+    return await this.viewService.getVisitedLocations(memberId, input);
   }
 
 

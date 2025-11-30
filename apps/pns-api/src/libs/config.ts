@@ -183,3 +183,12 @@ export const lookupMember = {
 			  as: 'visitedProducts.memberData',
 			},
 		  };
+		  
+		  export const LocationVisit = {
+			$lookup: {
+			  from: 'members',
+			  localField: 'visitedLocations.memberId',
+			  foreignField: '_id',
+			  as: 'visitedLocations.memberData',
+			},
+		  };
