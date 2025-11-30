@@ -9,6 +9,7 @@ import { FollowModule } from './follow/follow.module';
 import { BoardArticleModule } from './board-article/board-article.module';
 import { SocketModule } from './socket/socket.module';
 import { LocationModule } from './location/location.module';
+import { CsModule } from './cs/cs.module';
 
 
 @Module({
@@ -19,6 +20,6 @@ import { LocationModule } from './location/location.module';
      LikeModule,
      ViewModule,
      FollowModule, 
-     BoardArticleModule, SocketModule, LocationModule],
+     BoardArticleModule, SocketModule, LocationModule, CsModule],
 })
 export class ComponentsModule {}
