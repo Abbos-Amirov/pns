@@ -23,8 +23,6 @@ export class Notice {
   @Field()
   noticeContent: string;
 
-  @Field()
-  memberId: string;
 
   @Field()
   createdAt: Date;

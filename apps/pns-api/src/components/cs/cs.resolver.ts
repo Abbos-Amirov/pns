@@ -5,7 +5,9 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UseGuards } from '@nestjs/common';
 import { Notice } from '../../libs/dto/cs/notice.output';
-import { CreateNoticeInput } from '../../libs/dto/cs/notice.input';
+import { CreateNoticeInput, UpdateNoticeInput } from '../../libs/dto/cs/notice.input';
+import { AuthMember } from '../auth/decorators/authMember.decorator';
+import type { ObjectId } from 'mongoose';
 
 @Resolver()
 export class CsResolver {
@@ -20,8 +22,20 @@ export class CsResolver {
   @UseGuards(RolesGuard)
     @Mutation(() => Notice)
     async createNotice(
-      @Args('input') input: CreateNoticeInput,
-    ): Promise<Notice> {
-      return this.csService.createNotice(input, );
+      @Args('input') input: CreateNoticeInput, @AuthMember('_id') adminId: ObjectId): Promise<Notice> {
+
+       
+      return await this.csService.createNotice(input );
     }
+
+
+    @Roles(MemberType.ADMIN)
+    @UseGuards(RolesGuard)
+    @Mutation(() => Notice)
+    async updateNotice(
+      @Args('input') input: UpdateNoticeInput,
+    ): Promise<Notice> {
+      return this.csService.updateNotice( input, );
+    }
+    
 }

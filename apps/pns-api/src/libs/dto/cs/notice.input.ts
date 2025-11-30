@@ -23,8 +23,6 @@ export class CreateNoticeInput {
   @Field(() => String)
   noticeContent: string;
 
-  @Field(() => String)
-  memberId: string;
 }
 
 @InputType()
