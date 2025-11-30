@@ -3,10 +3,10 @@ import { LocationService } from './location.service';
 
 import { AuthMember } from '../auth/decorators/authMember.decorator';
 import type { ObjectId } from 'mongoose';
-import { CreateLocationInput } from '../../libs/dto/location/location.input';
+import { CreateLocationInput, LocationsInquiry } from '../../libs/dto/location/location.input';
 
 // ❗ MUHIM — SHU IMPORT ETISH SHART!!!
-import { Location } from '../../libs/dto/location/location';
+import { Location, Locations } from '../../libs/dto/location/location';
 
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UseGuards } from '@nestjs/common';
@@ -46,6 +46,18 @@ public async getLocation(
 
   return await this.locationService.getLocation(memberId, locationId);
 }
+
+@UseGuards(WithoutGuard)
+@Query(() => Locations)
+public async getLocations(
+  @Args('input') input: LocationsInquiry,
+  @AuthMember('_id') memberId: ObjectId,
+): Promise<Locations> {
+  console.log('Query: getLocations');
+
+  return await this.locationService.getLocations(memberId, input);
+}
+
 
 
   @Roles(MemberType.MEASURER)

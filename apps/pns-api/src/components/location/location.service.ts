@@ -5,16 +5,17 @@ import { Model, ObjectId } from 'mongoose';
 import { Member } from '../../libs/dto/member/member';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Location } from '../../libs/dto/location/location'
-import { CreateLocationInput } from '../../libs/dto/location/location.input';
+import { Location, Locations } from '../../libs/dto/location/location'
+import { CreateLocationInput, LocationsInquiry } from '../../libs/dto/location/location.input';
 import { MemberService } from '../member/member.service';
 import { ViewService } from '../view/view.service';
 import { LikeService } from '../like/like.service';
-import { Message } from '../../libs/enums/common.enum';
+import { Direction, Message } from '../../libs/enums/common.enum';
 import { LocationUpdateInput } from '../../libs/dto/location/location.update';
 import { LikeGroup } from '../../libs/enums/like.enum';
 import { StatisticModifier, T } from '../../libs/types/common';
 import { ViewGroup } from '../../libs/enums/view.enum';
+import { lookupAuthMemberLiked, lookupMember } from '../../libs/config';
 
 @Injectable()
 export class LocationService {
@@ -104,6 +105,52 @@ export class LocationService {
     return targetLocation;
   }
 
+  public async getLocations(
+    memberId: ObjectId,
+    input: LocationsInquiry,
+  ): Promise<Locations> {
+    const match: T = {}; // Location’da status bo‘lmasa bo‘sh obyekt kifoya
+
+    const sort: T = {
+      [input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC,
+    };
+    console.log('sort:', sort);
+
+    // Match query ni shakllantiramiz
+    this.shapeLocationMatchQuery(match, input);
+    console.log('match:', match);
+
+    const result = await this.locationModel
+      .aggregate([
+        { $match: match },
+        { $sort: sort },
+        {
+          $facet: {
+            list: [
+              { $skip: (input.page - 1) * input.limit },
+              { $limit: input.limit },
+              // foydalanuvchi likelarini qo‘shamiz
+              lookupAuthMemberLiked(memberId, LikeGroup.LOCATION),
+              // member ma’lumotini qo‘shamiz
+              lookupMember,
+              { $unwind: '$memberData' },
+            ],
+            metaCounter: [{ $count: 'total' }],
+          },
+        },
+      ])
+      .exec();
+
+    console.log('result:', result);
+
+    if (!result.length)
+      throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+
+    // Products dagidek: birinchi facet natijani qaytaramiz
+    return result[0];
+  }
+
+
   public async updateLocation(
     memberId: ObjectId,
     input: LocationUpdateInput,
@@ -141,5 +188,32 @@ export class LocationService {
       )
       .exec();
   }
+
+
+  private shapeLocationMatchQuery(match: T, input: LocationsInquiry) {
+    const { search } = input;
+    if (!search) return;
+
+    // memberId bo‘yicha filter
+    if (search.memberId) {
+      match.createdBy = search.memberId;
+    }
+
+    // locationType ro‘yxati bo‘yicha filter
+    if (search.typeList?.length) {
+      match.locationType = { $in: search.typeList };
+    }
+
+    // text → locationName yoki address ichidan qidirish
+    if (search.text) {
+      match.$or = [
+        { locationName: { $regex: search.text, $options: 'i' } },
+        { address: { $regex: search.text, $options: 'i' } },
+      ];
+    }
+
+    // kerak bo‘lsa latitude/longitude range larni keyin qo‘shib ketasan
+  }
+
 
 }
