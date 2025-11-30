@@ -58,5 +58,38 @@ export class CsResolver {
     ): Promise<Notice> {
       return this.csService.deleteNotice(id);
     }
+
+
+    // NOTICE
+
+    // CsResolver.ts ichida
+
+@Roles(MemberType.ADMIN)
+@UseGuards(RolesGuard)
+@Mutation(() => Notice)
+public async createCsNotice(                             // 🔸 endpoint nomi
+  @Args('input') input: CreateNoticeInput,
+  @AuthMember('_id') adminId: ObjectId,
+): Promise<Notice> {
+  console.log('Mutation: createCsNotice');
+
+  return await this.csService.createCsNotice({
+    ...input,
+    memberId: adminId,
+  });
+}
+
+// ───────────────────────────────────────────────
+
+// List endpoint (CS Center → Notice list)
+@UseGuards(WithoutGuard)
+@Query(() => NoticeListResponse)                         // ⚠️ sendagi list type nomini qo‘y
+public async getCsNoticeList(                            // 🔸 endpoint nomi
+  @Args('input') input: NoticeInquiry,
+): Promise<{ list: Notice[]; total: number }> {
+  console.log('Query: getCsNoticeList');
+
+  return await this.csService.getCsNoticeList(input);
+}
     
 }

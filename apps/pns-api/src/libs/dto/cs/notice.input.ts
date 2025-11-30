@@ -48,8 +48,9 @@ export class UpdateNoticeInput {
 @InputType()
 export class NoticeInquiry {
   @IsOptional()
-  @Field(() => NoticeCategoryType, { nullable: true })
-  noticeCategoryType?: NoticeCategoryType;
+  @Field(() => NoticeCategoryType, { nullable: true, defaultValue: NoticeCategoryType.PRODUCT })
+  noticeCategoryType?: NoticeCategoryType = NoticeCategoryType.PRODUCT;
+
 
   @IsOptional()
   @Field(() => NoticeStatus, { nullable: true })
@@ -79,3 +80,4 @@ export class NoticeInquiry {
   @Max(50)
   limit?: number;
 }
+

@@ -1,10 +1,10 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { AuthService } from '../auth/auth.service';
 import { Model, ObjectId } from 'mongoose';
 import { Notice } from '../../libs/dto/cs/notice.output';
 import { CreateNoticeInput, NoticeInquiry, UpdateNoticeInput } from '../../libs/dto/cs/notice.input';
-import { NoticeStatus } from '../../libs/enums/notice.enum';
+import { NoticeCategoryType, NoticeStatus } from '../../libs/enums/notice.enum';
 import moment from 'moment';
 import { Direction, Message } from '../../libs/enums/common.enum';
 
@@ -129,5 +129,78 @@ export class CsService {
         return result;
       }
     
+
+      // >>>>>>>>>>>>> NOTIC <<<<<<<<<<<<
+
+      // CsService.ts ichida
+
+// 1) CREATE – faqat admin Notice qo‘shadi
+public async createCsNotice(
+    input: CreateNoticeInput & { memberId: ObjectId },
+  ): Promise<Notice> {
+    try {
+      const newNotice = await this.noticeModel.create(input);
+      return newNotice;
+    } catch (err: any) {
+      console.log('Create CsNotice Error:', err.message);
+      throw new BadRequestException(Message.CREATE_FAILED);
+    }
+  }
+  
+  // ───────────────────────────────────────────────
+  
+  // 2) LIST – CS Center → Notice bo‘limi uchun
+  public async getCsNoticeList(
+    input: NoticeInquiry,
+  ): Promise<{ list: Notice[]; total: number }> {
+    const page = input.page ?? 1;
+    const limit = input.limit ?? 10;
+  
+    // 🔹 Default holatda faqat ACTIVE lar
+    const match: any = {
+      noticeStatus: input.noticeStatus ?? NoticeStatus.ACTIVE,
+    };
+  
+    // 🔹 CategoryType bo‘yicha filter (PRODUCT, LOCATION, SYSTEM va h.k.)
+   
+  
+    // 🔹 Qidirish (title + content)
+    if (input.search) {
+      match.$or = [
+        { noticeTitle: { $regex: input.search, $options: 'i' } },
+        { noticeContent: { $regex: input.search, $options: 'i' } },
+      ];
+    }
+  
+    // 🔹 Sort
+    const sort: any = {
+      [input.sort ?? 'createdAt']: input.direction ?? Direction.DESC,
+    };
+  
+    const result = await this.noticeModel
+      .aggregate([
+        { $match: match },
+        { $sort: sort },
+        {
+          $facet: {
+            list: [
+              { $skip: (page - 1) * limit },
+              { $limit: limit },
+            ],
+            metaCounter: [{ $count: 'total' }],
+          },
+        },
+      ])
+      .exec();
+  
+    if (!result.length) {
+      return { list: [], total: 0 };
+    }
+  
+    return {
+      list: result[0].list,
+      total: result[0].metaCounter[0]?.total ?? 0,
+    };
+  }
     
 }
