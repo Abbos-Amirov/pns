@@ -166,6 +166,15 @@ export const lookupMember = {
 			},
 		  };
 
+		  export const locationFavorite = {
+			$lookup: {
+			  from: 'members',
+			  localField: 'favoriteLocation.memberId',
+			  foreignField: '_id',
+			  as: 'favoriteLocation.memberData',
+			},
+		}
+
 		  export const lookupVisit = {
 			$lookup: {
 			  from: 'members',

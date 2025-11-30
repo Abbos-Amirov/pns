@@ -4,10 +4,12 @@ import { Model, ObjectId } from 'mongoose';
 import { Like, MeLiked } from '../../libs/dto/like/like';
 import { LikeInput } from '../../libs/dto/like/like.input';
 import { Message } from '../../libs/enums/common.enum';
-import { lookupFavorite } from '../../libs/config';
+import { locationFavorite, lookupFavorite } from '../../libs/config';
 import { Product, Products } from '../../libs/dto/products/product';
 import { OrdinaryInquiry } from '../../libs/dto/products/product.input';
 import { LikeGroup } from '../../libs/enums/like.enum';
+import { Locations } from '../../libs/dto/location/location';
+import { CityInquiry } from '../../libs/dto/location/location.input';
 
 @Injectable()
 export class LikeService {
@@ -82,6 +84,63 @@ export class LikeService {
     result.list = data[0].list.map((ele) => ele.favoriteProduct);
    
 
+    return result;
+  }
+
+
+
+  //  LICATION FOVARIT
+  
+  public async getFavoriteLocation(
+    memberId: ObjectId,
+    input:CityInquiry ,
+  ): Promise<Locations> {
+    const { page, limit } = input;
+  
+    const match = {
+      likeGroup: LikeGroup.LOCATION,
+      memberId: memberId,
+    };
+
+    console.log("match >>>>>", match);
+    
+  
+    const data = await this.likeModel
+      .aggregate([
+        { $match: match },
+        { $sort: { updatedAt: -1 } },
+        {
+          $lookup: {
+            from: 'locations',
+            localField: 'likeRefId',
+            foreignField: '_id',
+            as: 'favoriteLocation',
+          },
+        },
+        { $unwind: '$favoriteLocation' },
+        {
+          $facet: {
+            list: [
+              { $skip: (page - 1) * limit },
+              { $limit: limit },
+              locationFavorite, // Product dagidagi kabi, faqat location uchun mos ishlaydi
+              { $unwind: '$favoriteLocation.memberData' },
+            ],
+            metaCounter: [{ $count: 'total' }],
+          },
+        },
+      ])
+      .exec();
+  
+    console.log('favorite data:', data);
+  
+    const result: Locations = {
+      list: [],
+      metaCounter: data[0].metaCounter,
+    };
+  
+    result.list = data[0].list.map((ele) => ele.favoriteLocation);
+  
     return result;
   }
 

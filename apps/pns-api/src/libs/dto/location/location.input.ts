@@ -112,3 +112,15 @@ export class LocationsInquiry {
   search: LISearch;
 }
 
+@InputType()
+export class CityInquiry {
+  @IsNotEmpty()
+  @Min(1)
+  @Field(() => Int)
+  page: number;
+
+  @IsNotEmpty()
+  @Min(1)
+  @Field(() => Int)
+  limit: number;
+}

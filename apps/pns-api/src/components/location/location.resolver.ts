@@ -3,7 +3,7 @@ import { LocationService } from './location.service';
 
 import { AuthMember } from '../auth/decorators/authMember.decorator';
 import type { ObjectId } from 'mongoose';
-import { CreateLocationInput, LocationsInquiry } from '../../libs/dto/location/location.input';
+import { CityInquiry, CreateLocationInput, LocationsInquiry } from '../../libs/dto/location/location.input';
 
 // ❗ MUHIM — SHU IMPORT ETISH SHART!!!
 import { Location, Locations } from '../../libs/dto/location/location';
@@ -15,6 +15,7 @@ import { MemberType } from '../../libs/enums/member.enum';
 import { LocationUpdateInput } from '../../libs/dto/location/location.update';
 import { shapeIntoMongoObjectId } from '../../libs/config';
 import { WithoutGuard } from '../auth/guards/without.guard';
+import { AuthGuard } from '../auth/guards/auth.guard';
 
 @Resolver(() => Location)  // <-- MUHIM
 export class LocationResolver {
@@ -75,6 +76,30 @@ public async getLocations(
   }
 
 
+
+
+  @UseGuards(AuthGuard)
+@Query(() => Locations)
+public async getFavoriteLocations(
+  @Args('input') input: CityInquiry,
+  @AuthMember('_id') memberId: ObjectId,
+): Promise<Locations> {
+  console.log('Query: getFavoriteLocations');
+  return await this.locationService.getFavoriteLocations(memberId, input);
+}
+
+@UseGuards(AuthGuard)
+@Mutation(() => Location)
+public async likeTargetLocation(
+  @Args('locationId') input: string,
+  @AuthMember('_id') memberId: ObjectId,
+): Promise<Location> {
+  console.log('Mutation: likeTargetLocation');
+
+  const likeRefId = shapeIntoMongoObjectId(input);
+
+  return await this.locationService.likeTargetLocation(memberId, likeRefId);
+}
 
 
   // ADMIN

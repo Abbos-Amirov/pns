@@ -6,7 +6,7 @@ import { Member } from '../../libs/dto/member/member';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Location, Locations } from '../../libs/dto/location/location'
-import { CreateLocationInput, LocationsInquiry } from '../../libs/dto/location/location.input';
+import { CityInquiry, CreateLocationInput, LocationsInquiry } from '../../libs/dto/location/location.input';
 import { MemberService } from '../member/member.service';
 import { ViewService } from '../view/view.service';
 import { LikeService } from '../like/like.service';
@@ -16,6 +16,7 @@ import { LikeGroup } from '../../libs/enums/like.enum';
 import { StatisticModifier, T } from '../../libs/types/common';
 import { ViewGroup } from '../../libs/enums/view.enum';
 import { lookupAuthMemberLiked, lookupMember } from '../../libs/config';
+import { LikeInput } from '../../libs/dto/like/like.input';
 
 @Injectable()
 export class LocationService {
@@ -151,6 +152,8 @@ export class LocationService {
   }
 
 
+    //** >>>>>>>>>>>>>>>>  updateLocation<<<<<<<<<<<<<<<<<<<<<<*/
+
   public async updateLocation(
     memberId: ObjectId,
     input: LocationUpdateInput,
@@ -176,6 +179,54 @@ export class LocationService {
     }
   }
 
+  public async getFavoriteLocations(
+    memberId: ObjectId,
+    input: CityInquiry,
+  ): Promise<Locations> {
+    const result = await this.likeService.getFavoriteLocation(memberId, input);
+    console.log(">>>>>>>>resalt",result);
+    
+    return result;
+  }
+
+
+
+   //** >>>>>>>>>>>>>>>> lIKES <<<<<<<<<<<<<<<<<<<<<<*/
+
+  public async likeTargetLocation(
+    memberId: ObjectId,
+    likeRefId: ObjectId,
+  ): Promise<Location> {
+    // 1) Target locationni tekshiramiz
+    const target = await this.locationModel
+      .findOne({ _id: likeRefId })
+      .exec();
+  
+    if (!target)
+      throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+  
+    // 2) Like xizmatiga yuboramiz (toggle)
+    const input: LikeInput = {
+      memberId: memberId,
+      likeRefId: likeRefId,
+      likeGroup: LikeGroup.LOCATION,
+    };
+  
+    // toggle → +1 yoki -1 qaytaradi
+    const modifier: number = await this.likeService.toggleLike(input);
+  
+    // 3) Statistika yangilaymiz (locationLikes++)
+    const result = await this.locationStatsEditor({
+      _id: likeRefId,
+      targetKey: 'locationLikes',
+      modifier: modifier,
+    });
+  
+    if (!result)
+      throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
+  
+    return result;
+  }
 
   // ADMIN
   public async removeLocationByAdmin(locationId: ObjectId): Promise<Location> {
