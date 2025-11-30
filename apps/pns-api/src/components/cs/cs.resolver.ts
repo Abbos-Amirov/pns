@@ -37,5 +37,14 @@ export class CsResolver {
     ): Promise<Notice> {
       return this.csService.updateNotice( input, );
     }
+
+    @Roles(MemberType.ADMIN)
+  @UseGuards(RolesGuard)
+    @Mutation(() => Notice)
+    async deleteNotice(
+      @Args('id') id: string,
+    ): Promise<Notice> {
+      return this.csService.deleteNotice(id);
+    }
     
 }

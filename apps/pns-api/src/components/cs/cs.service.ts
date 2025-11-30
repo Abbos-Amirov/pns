@@ -53,6 +53,17 @@ export class CsService {
         // 7️⃣ Natijani qaytaramiz
         return result;
       }
+
+      public async deleteNotice(id: string,): Promise<Notice> {
+
+        const result = await this.noticeModel.findByIdAndDelete(id).exec();
+        // 4️⃣ Agar yangilanish amalga oshmasa, xatolik
+        if (!result) {
+          throw new InternalServerErrorException('Notice delete failed');
+        }
+        // 5️⃣ Yangilangan (o‘chirilgan) obyektni qaytaramiz
+        return result;
+      }
     
     
 }
