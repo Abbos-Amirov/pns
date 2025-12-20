@@ -62,6 +62,12 @@ export enum ProductCategory {
   EXTERIOR = 'EXTERIOR',  // Tashqi (binoning tashqi qismi uchun)
   BALCONY = 'BALCONY',    // Balkon yoki veranda uchun
   OFFICE = 'OFFICE',      // Ofis yoki tijoriy joylar uchun
+
+  ALUMINUM = 'ALUMINUM',  // Alyuminiy material
+  PVC = 'PVC',            // Plastik (PVC) material
+  WOOD = 'WOOD',          // Yog‘och material
+  STEEL = 'STEEL',        // Po‘lat (metall) material
+  GLASS = 'GLASS',  
 }
 registerEnumType(ProductCategory, { name: 'ProductCategory' });
 

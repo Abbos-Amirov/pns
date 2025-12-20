@@ -29,9 +29,12 @@ export class LocationResolver {
     @Args('input') input: CreateLocationInput,
     @AuthMember('_id') memberId: ObjectId,
   ): Promise<Location> {
-    console.log('Mutation: createLocation');
+    console.log('Mutation: >>>>>> createLocation');
 
-    input.memberId = memberId;  // <-- memberId shu yerga saqlanadi
+    input.memberId = memberId; 
+    
+    console.log("input",input);
+    // <-- memberId shu yerga saqlanadi
 
     return await this.locationService.createLocation(input);
   }

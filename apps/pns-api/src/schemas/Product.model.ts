@@ -7,6 +7,7 @@ import {
   ProductOpenType,
   ProductStatus,
   ProductCategory,
+  ProductLocation,
 } from '../libs/enums/product.enum';
 
 const ProductSchema = new Schema(
@@ -60,6 +61,12 @@ const ProductSchema = new Schema(
       default: ProductStatus.ACTIVE, // AVAILABLE by default
     },
 
+    productLocation:{
+      type: String,
+      enum: ProductLocation ,
+
+    },
+
     // === MAHSULOT NOMI === /
     productTitle: {
       type: String,
@@ -79,11 +86,15 @@ const ProductSchema = new Schema(
       required: true,
     },
 
+  
     // === O‘LCHAM (width x height) === /
     productWidth: {
       type: Number,
       required: true,
     },
+
+   
+    
     productHeight: {
       type: Number,
       required: true,

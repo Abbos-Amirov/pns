@@ -10,7 +10,7 @@ import { Product, Products } from '../../libs/dto/products/product';
 import { ViewService } from '../view/view.service';
 import { StatisticModifier, T } from '../../libs/types/common';
 import { ViewGroup } from '../../libs/enums/view.enum';
-import { ProductStatus } from '../../libs/enums/product.enum';
+import { ProductMaterial, ProductStatus } from '../../libs/enums/product.enum';
 import { ProductUpdate } from '../../libs/dto/products/product.update';
 import { lookupAuthMemberLiked, lookupMember, shapeIntoMongoObjectId } from '../../libs/config';
 import { LikeService } from '../like/like.service';
@@ -64,7 +64,7 @@ export class ProductService {
         
       
         //  Maqsadli property’ni topamiz
-        const targetProduct: Product | null = await this.productModel.findOne(search).lean().exec();
+        const targetProduct: Product | null = await this.productModel.findOne(search).exec();
         if (!targetProduct) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
        
@@ -80,21 +80,24 @@ export class ProductService {
       
           // 🔹 View yozuvini saqlaymiz (agar bu foydalanuvchi ilgari ko‘rmagan bo‘lsa)
           const newView = await this.viewService.recordView(viewInput);
+          console.log("newView>>>>>>>>>>>",newView)
           if (newView) {
             await this.productStatsEditor({
               _id: productId,
-              targetKey: 'propertyViews',
+              targetKey: 'productViews',
               modifier: 1,
             });
+           
             targetProduct.productViews++;
           }
+          console.log("newView>>>>>>>>>>>",newView)
       
           // //  Meliked (ya’ni yoqtirganmi) qismi keyin yoziladi
           // // meliked
 
           const likeInput = {memberId: memberId, likeRefId: productId, likeGroup: LikeGroup.PRODUCT};
           targetProduct.meLiked = await this.likeService.checkLikeExistence(likeInput)
-          console.log(" targetProperty.meLiked", targetProduct.meLiked);
+          console.log(" targetProduct.meLiked", targetProduct.meLiked);
           
           
         }
@@ -127,6 +130,8 @@ export class ProductService {
 
 
       private shapeMatchQuery(match: T, input: ProductsInquiry): void {
+
+        const search = input?.search
         const {
           memberId,
           locationList,
@@ -146,6 +151,11 @@ export class ProductService {
       
         // 🔹 Property location (joylashuv bo‘yicha filter)
         if (locationList) match.propertyLocation = { $in: locationList };
+
+        if (search.productMaterial) {
+          match.productMaterial = search.productMaterial;
+        }
+      
       
         // 🔹 Xonalar soni
         if (roomsList) match.propertyRooms = { $in: roomsList };
@@ -158,7 +168,7 @@ export class ProductService {
       
         // 🔹 Narx oralig‘i
         if (pricesRange)
-          match.propertyPrice = {
+          match.productPrice = {
             $gte: pricesRange.start,
             $lte: pricesRange.end,
           };
@@ -273,6 +283,7 @@ export class ProductService {
       ): Promise<Products> {
         const match: T = {
           productStatus: ProductStatus.ACTIVE,
+          productMaterial: ProductMaterial.PVC
         };
       
         
@@ -362,7 +373,7 @@ export class ProductService {
 
 
       public async removeProductByAdmin(productId: ObjectId): Promise<Product> {
-        const search: T = { _id: productId, productStatus: ProductStatus.DELETE };
+        const search: T = { _id: productId,  };
       
         const result = await this.productModel
           .findOneAndDelete(search)

@@ -37,6 +37,9 @@ export class UpdateNoticeInput {
   @Field({ nullable: true })
   noticeContent?: string;
 
+  @Field(() => NoticeCategoryType, { nullable: true, })
+  noticeCategoryType?: NoticeCategoryType 
+
   @Field(() => NoticeCategory, { nullable: true })
   noticeCategory?: NoticeCategory;
 
@@ -48,13 +51,18 @@ export class UpdateNoticeInput {
 @InputType()
 export class NoticeInquiry {
   @IsOptional()
-  @Field(() => NoticeCategoryType, { nullable: true, defaultValue: NoticeCategoryType.PRODUCT })
-  noticeCategoryType?: NoticeCategoryType = NoticeCategoryType.PRODUCT;
+  @Field(() => NoticeCategoryType, { nullable: true, })
+  noticeCategoryType?: NoticeCategoryType 
 
 
   @IsOptional()
   @Field(() => NoticeStatus, { nullable: true })
   noticeStatus?: NoticeStatus;
+
+  @IsOptional()
+  @Field(() => NoticeCategory, { nullable: true })
+  noticeCategory?: NoticeCategory;
+
 
   @IsOptional()
   @IsString()
@@ -77,7 +85,7 @@ export class NoticeInquiry {
   @IsOptional()
   @Field(() => Int, { defaultValue: 10 })
   @Min(1)
-  @Max(50)
+  @Max(110)
   limit?: number;
 }
 

@@ -14,6 +14,25 @@ import {
 import { MeLiked } from '../like/like';
 import { Member, TotalCounter } from '../member/member';
 
+
+
+
+@ObjectType()
+export class PricesRange {
+  @Field(() => Int)
+  start: number;
+
+  @Field(() => Int)
+  end: number;
+}
+@ObjectType()
+export class PeriodsRange {
+  @Field(() => Date)
+  start: Date;
+
+  @Field(() => Date)
+  end: Date;
+}
 @ObjectType()
 export class  Product {
   @Field(() => String)
@@ -42,6 +61,13 @@ export class  Product {
 
   @Field(() => Number)
   productPrice: number;
+  
+  @Field(() => PricesRange, )
+  pricesRange: PricesRange;
+
+  
+  @Field(() => PeriodsRange,)
+  periodsRange: PeriodsRange;
 
   @Field(() => ProductMaterial)
   productMaterial: string;
@@ -113,6 +139,8 @@ export class  Product {
 
   
 }
+
+
 
 @ObjectType()
 export class Products {

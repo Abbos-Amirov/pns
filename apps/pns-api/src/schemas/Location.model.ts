@@ -1,5 +1,5 @@
 import  {  Schema } from 'mongoose';
-import { LocationType } from '../libs/enums/location.enum';
+import { LocationCity, LocationType } from '../libs/enums/location.enum';
 
 
 const LocationSchema = new Schema(
@@ -30,6 +30,12 @@ locationViews: {
     locationType: {
       type: String,
       enum: LocationType,
+      required: true,
+    },
+
+    locationCity: {
+      type: String,
+      enum: LocationCity,
       required: true,
     },
 

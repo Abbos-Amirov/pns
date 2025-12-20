@@ -40,6 +40,11 @@ class BAISearch {
 	@IsOptional()
 	@Field(() => String, { nullable: true })
 	memberId?: ObjectId;
+
+	@IsOptional()
+	@Field(() => BoardArticleStatus, { nullable: true })
+	articleStatus?: BoardArticleStatus;
+
 }
 
 @InputType()

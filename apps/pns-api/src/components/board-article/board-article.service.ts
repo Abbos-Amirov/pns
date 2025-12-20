@@ -85,6 +85,8 @@ export class BoardArticleService {
               });
               targetBoardArticle.articleViews++
            }
+           console.log("newView>>>>>",newView);
+           
 
 
        const likeInput = {memberId: memberId, likeRefId: articleId, likeGroup: LikeGroup.PRODUCT};

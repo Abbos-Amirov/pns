@@ -91,5 +91,15 @@ public async getCsNoticeList(                            // 🔸 endpoint nomi
 
   return await this.csService.getCsNoticeList(input);
 }
+
+
+@Roles(MemberType.ADMIN)
+@UseGuards(RolesGuard)
+  @Mutation(() => Notice)
+  async deleteCsNotice(
+    @Args('id') id: string,
+  ): Promise<Notice> {
+    return this.csService.deleteCsNotice(id);
+  }
     
 }

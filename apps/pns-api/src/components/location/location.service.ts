@@ -36,7 +36,8 @@ export class LocationService {
     const{memberId} = input;
     try {
       const result = await this.locationModel.create(input);
-      console.log('result', result);
+
+      ;
   
       // Agar measurer yoki member statistikasi bo‘lsa SENING structure bo‘yicha:
       const natija = await this.memberService.memberStatsEditor({
@@ -155,30 +156,42 @@ export class LocationService {
 
     //** >>>>>>>>>>>>>>>>  updateLocation<<<<<<<<<<<<<<<<<<<<<<*/
 
-  public async updateLocation(
-    memberId: ObjectId,
-    input: LocationUpdateInput,
-  ): Promise<any> {
-    const search = {
-      _id: input._id,
-      createdBy: memberId, // faqat o‘z yaratgan joyni update qilsin
-    };
-
-    try {
-      const result = await this.locationModel
-        .findOneAndUpdate(search, input, { new: true })
-        .exec();
-
-      if (!result) {
+    public async updateLocation(
+      memberId: ObjectId,
+      input: LocationUpdateInput,
+    ): Promise<any> {
+    
+      const { _id, ...updateData } = input;
+    
+      const search = {
+        _id: _id,
+        memberId: memberId, // 🔐 faqat o‘z location’ini
+      };
+    
+      console.log('SEARCH >>>', search);
+      console.log('UPDATE >>>', updateData);
+    
+      try {
+        const result = await this.locationModel
+          .findOneAndUpdate(
+            search,               // ✅ faqat qidirish
+            { $set: updateData }, // ✅ faqat update
+            { new: true },
+          )
+          .exec();
+    
+        console.log('RESULT >>>', result);
+    
+        if (!result) {
+          throw new InternalServerErrorException(Message.UPDATE_FAILED);
+        }
+    
+        return result;
+      } catch (err: any) {
+        console.log('Error, Location.update:', err.message);
         throw new InternalServerErrorException(Message.UPDATE_FAILED);
       }
-
-      return result;
-    } catch (err: any) {
-      console.log('Error, Location.update:', err.message);
-      throw new InternalServerErrorException(Message.UPDATE_FAILED);
     }
-  }
 
   public async getFavoriteLocations(
     memberId: ObjectId,
@@ -276,13 +289,17 @@ export class LocationService {
     if (!search) return;
 
     // memberId bo‘yicha filter
-    if (search.memberId) {
-      match.createdBy = search.memberId;
+    if (search.id) {
+      match.memberId = search.id;
     }
 
     // locationType ro‘yxati bo‘yicha filter
     if (search.typeList?.length) {
       match.locationType = { $in: search.typeList };
+    }
+
+    if (search.locationCity?.length) {
+      match.locationCity = { $in: search.locationCity };
     }
 
     // text → locationName yoki address ichidan qidirish

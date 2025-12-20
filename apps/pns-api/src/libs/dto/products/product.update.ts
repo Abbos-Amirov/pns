@@ -6,105 +6,97 @@ import {
   Length,
   Min,
 } from 'class-validator';
-import { ProductLocation, ProductStatus, ProductType } from '../../enums/product.enum';
+import { ProductCategory, ProductGlassType, ProductLocation, ProductMaterial, ProductOpenType, ProductStatus, ProductType } from '../../enums/product.enum';
 import type { ObjectId } from 'mongoose';
 
 @InputType()
 export class ProductUpdate {
-  //  Product ID — bu yangilanadigan mahsulotning unikal ID-si
   @IsNotEmpty()
   @Field(() => String)
-  _id: ObjectId;
+  _id: string;
 
-  // Product turi (Electronics, Furniture, Food va h.k.)
   @IsOptional()
   @Field(() => ProductType, { nullable: true })
   productType?: ProductType;
 
-  //  Product holati (Active, Sold, Deleted)
   @IsOptional()
   @Field(() => ProductStatus, { nullable: true })
   productStatus?: ProductStatus;
 
-  //  Mahsulot joylashuvi (BUSAN, SEOUL, va h.k.)
   @IsOptional()
   @Field(() => ProductLocation, { nullable: true })
   productLocation?: ProductLocation;
 
+  @IsOptional()
+  @Field(() => Number, { nullable: true })
+  productHeight?: number;
 
   @IsOptional()
-@Field(() => Number,{ nullable: true })
-productHeight?: number;
+  @Field(() => Number, { nullable: true })
+  productWidth?: number;
 
-@IsOptional()
-@Field(() => Number,{ nullable: true })
-productWidth?: number;
-
-  // To‘liq manzil
   @IsOptional()
-  @Length(3, 100)
   @Field(() => String, { nullable: true })
   productAddress?: string;
 
-  //  Mahsulot sarlavhasi
   @IsOptional()
-  @Length(3, 100)
   @Field(() => String, { nullable: true })
   productTitle?: string;
 
-  //  Narxi
   @IsOptional()
   @Field(() => Number, { nullable: true })
   productPrice?: number;
 
-  //  O‘lchami (kv. metr yoki hajm)
+  // 🟢 NEW — Product Material
   @IsOptional()
-  @Field(() => Number, { nullable: true })
-  productSquare?: number;
+  @Field(() => ProductMaterial, { nullable: true })
+  productMaterial?: ProductMaterial;
 
-  //  Variantlar yoki miqdorlar soni
+  // 🟢 NEW — Glass Type
   @IsOptional()
-  @IsInt()
-  @Min(1)
-  @Field(() => Int, { nullable: true })
-  productQuantity?: number;
+  @Field(() => ProductGlassType, { nullable: true })
+  productGlassType?: ProductGlassType;
 
-  //  Paketdagi mahsulotlar soni
+  // 🟢 NEW — Open Type
+  @IsOptional()
+  @Field(() => ProductOpenType, { nullable: true })
+  productOpenType?: ProductOpenType;
+
+  // 🟢 NEW — Category
+  @IsOptional()
+  @Field(() => ProductCategory, { nullable: true })
+  productCategory?: ProductCategory;
+
   @IsOptional()
   @IsInt()
   @Min(1)
   @Field(() => Int, { nullable: true })
   productItems?: number;
 
-  // Rasm fayllar
   @IsOptional()
   @Field(() => [String], { nullable: true })
   productImages?: string[];
 
-  //  Qo‘shimcha tavsif
   @IsOptional()
-  @Length(5, 500)
   @Field(() => String, { nullable: true })
   productDesc?: string;
 
-  // Barter holati (true/false)
-  @IsOptional()
-  @Field(() => Boolean, { nullable: true })
-  productBarter?: boolean;
-
-  //  Ijaraga beriladimi (true/false)
+  // 🟢 NEW — RENT YES/NO
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
   productRent?: boolean;
 
-  // Sotilgan sana
-  soldAt?: Date;
-
-  // O‘chirilgan sana
-  deletedAt?: Date;
-
-  // Ishlab chiqarilgan sana
+  // 🟢 NEW — BARTER OPTION
   @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  productBarter?: boolean;
+
   @Field(() => Date, { nullable: true })
   manufacturedAt?: Date;
+
+  @Field(() => Date, { nullable: true })
+  soldAt?: Date;
+
+  @Field(() => Date, { nullable: true })
+  deletedAt?: Date;
 }

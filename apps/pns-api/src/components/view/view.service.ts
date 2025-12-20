@@ -30,6 +30,8 @@ export class ViewService {
   private async checkViewExistence(input: ViewInput): Promise<View | null> {
     const { memberId, viewRefId } = input;
     const search: T = { memberId: memberId, viewRefId: viewRefId };
+    console.log("search>>>>>",search);
+    
     return await this.viewModel.findOne(search).exec();
   }
 

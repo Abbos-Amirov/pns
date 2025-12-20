@@ -1,5 +1,5 @@
 import { InputType, Field, Float, Int } from '@nestjs/graphql';
-import { LocationType } from '../../../libs/enums/location.enum';
+import { LocationType, LocationCity } from '../../../libs/enums/location.enum';
 import { GraphQLUpload } from 'graphql-upload';
 import type { FileUpload } from 'graphql-upload';
 import type { ObjectId } from 'mongoose';
@@ -21,14 +21,23 @@ export class CreateLocationInput {
   @Field(() => LocationType)
   locationType: LocationType;
 
+
+  @Field(() => LocationCity)
+  locationCity: LocationCity;
+
   @Field(() => Float)
   latitude: number;
 
   @Field(() => Float)
   longitude: number;
 
-  @Field(() => [GraphQLUpload], { nullable: true })
-  images?: Promise<FileUpload>[]; // Bir nechta rasm yuklash
+
+@Field(() => [String], { nullable: true })
+images?: string[];
+
+
+  // @Field(() => [GraphQLUpload], { nullable: true })
+  // images?: Promise<FileUpload>[]; // Bir nechta rasm yuklash
 
   memberId: ObjectId;
 }
@@ -46,11 +55,17 @@ export class LocationFilterInput {
 class LISearch {
   @IsOptional()
   @Field(() => String, { nullable: true })
-  memberId?: ObjectId;   // qaysi "razmer oluvchi" yaratgan joylar
+  id?: ObjectId;   // qaysi "razmer oluvchi" yaratgan joylar
 
   @IsOptional()
   @Field(() => [LocationType], { nullable: true })
   typeList?: LocationType[];   // locationType bo‘yicha filter
+
+
+  @IsOptional()
+  @Field(() => [LocationCity], { nullable: true })
+  locationCity?: LocationCity[];   // locationType bo‘yicha filter
+
 
   @IsOptional()
   @Field(() => String, { nullable: true })

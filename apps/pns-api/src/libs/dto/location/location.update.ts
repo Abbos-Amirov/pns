@@ -21,6 +21,11 @@ export class LocationUpdateInput {
   @Field(() => Float, { nullable: true })
   latitude?: number;
 
+
+  @Field(() => [String], { nullable: true })
+  images: string[];
+
+
   @Field(() => Float, { nullable: true })
   longitude?: number;
 }

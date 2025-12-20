@@ -80,10 +80,18 @@ export class MemberResolver {
 // >>>>>>>>>  GET AGENT <<<<<<<<<<<<<<<<
 @UseGuards(WithoutGuard)
 @Query(() => Members)
-public async getAgents(@Args('input') input:  AgentsInquiry, @AuthMember("_id") memberId: ObjectId): Promise<Members>{
+public async getMeasurers(@Args('input') input:  AgentsInquiry, @AuthMember("_id") memberId: ObjectId): Promise<Members>{
   console.log("Query getAgents")
-  return await this.memberService.getAgents(memberId,input)
+  return await this.memberService.getMeasurers(memberId,input)
 }
+
+@UseGuards(WithoutGuard)
+@Query(() => Members)
+public async getInstallers(@Args('input') input:  AgentsInquiry, @AuthMember("_id") memberId: ObjectId): Promise<Members>{
+  console.log("Query getAgents")
+  return await this.memberService.getInstallers(memberId,input)
+}
+
 
 
  /** >>>>>>>>>>>>>>>>>  LIKE Target Member <<<<<<<<<<<<<<<<<<   */
@@ -108,7 +116,7 @@ public async getAgents(@Args('input') input:  AgentsInquiry, @AuthMember("_id") 
  // Authorization: ADMIN
  @Roles(MemberType.ADMIN)
 @UseGuards(RolesGuard)
- @Mutation (() => Members )
+ @Query (() => Members )
  public async getAllMembersByAdmin(@Args('input') input: MembersInquiry): Promise<Members> {    
    return  await this.memberService.getAllMembersByAdmin(input);
  }

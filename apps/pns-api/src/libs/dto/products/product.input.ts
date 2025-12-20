@@ -1,6 +1,6 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsIn, IsInt, IsNotEmpty, IsOptional, Length, Min } from 'class-validator';
-import { ProductLocation, ProductStatus, ProductType } from '../../enums/product.enum';
+import { ProductCategory, ProductLocation, ProductMaterial, ProductStatus, ProductType } from '../../enums/product.enum';
 import type { ObjectId } from 'mongoose';
 import { Direction } from '../../enums/common.enum';
 import { availableOptions, availableProductSorts } from '../../config';
@@ -92,7 +92,7 @@ productWidth: number;
 }
 
 @InputType()
-export class PricesRange {
+export class PricesRangeInput {
   @Field(() => Int)
   start: number;
 
@@ -119,7 +119,7 @@ export class HeightRange {
 }
 
 @InputType()
-export class PeriodsRange {
+export class PeriodsRangeInput {
   @Field(() => Date)
   start: Date;
 
@@ -138,6 +138,10 @@ class PISearch {
   locationList?: ProductLocation[];
 
   @IsOptional()
+  @Field(() => ProductCategory, { nullable: true })
+  productCategory?: ProductCategory;
+
+  @IsOptional()
   @Field(() => [ProductType], { nullable: true })
   typeList?: ProductType[];
 
@@ -148,6 +152,12 @@ class PISearch {
   @IsOptional()
   @Field(() => [Int], { nullable: true })
   bedsList?: number[];
+  
+
+  @IsOptional()
+  @Field(() => ProductStatus, { nullable: true })
+  productStatus?: ProductStatus;
+
 
   @IsOptional()
   @IsIn(availableOptions, { each: true })
@@ -155,16 +165,22 @@ class PISearch {
   options?: string[];
 
   @IsOptional()
-  @Field(() => PricesRange, { nullable: true })
-  pricesRange?: PricesRange;
+  @Field(() => PricesRangeInput, { nullable: true })
+  pricesRange?: PricesRangeInput;
 
   @IsOptional()
-  @Field(() => PeriodsRange, { nullable: true })
-  periodsRange?: PeriodsRange;
+  @Field(() =>  PeriodsRangeInput, { nullable: true })
+  periodsRange?:  PeriodsRangeInput;
 
   @IsOptional()
   @Field(() =>HeightRange , { nullable: true })
   heightRange ?: HeightRange ;
+
+
+  @IsOptional()
+  @Field(() => ProductMaterial, { nullable: true })
+  productMaterial?: ProductMaterial;
+
 
 
   @IsOptional()
@@ -192,6 +208,10 @@ export class ProductsInquiry {
   @IsIn(availableProductSorts)
   @Field(() => String, { nullable: true })
   sort?: string;
+
+  @IsOptional()
+  @Field(() => ProductMaterial, { nullable: true })
+  productMaterial?: ProductMaterial;
 
   @IsOptional()
   @Field(() => Direction, { nullable: true })
