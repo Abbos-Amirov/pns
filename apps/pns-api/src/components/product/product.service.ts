@@ -150,7 +150,7 @@ export class ProductService {
         if (memberId) match.memberId = shapeIntoMongoObjectId(memberId);
       
         // 🔹 Property location (joylashuv bo‘yicha filter)
-        if (locationList) match.propertyLocation = { $in: locationList };
+        if (locationList && locationList?.length) match.propertyLocation = { $in: locationList };
 
         if (search.productMaterial) {
           match.productMaterial = search.productMaterial;
@@ -158,13 +158,13 @@ export class ProductService {
       
       
         // 🔹 Xonalar soni
-        if (roomsList) match.propertyRooms = { $in: roomsList };
+        if (roomsList && roomsList.length) match.propertyRooms = { $in: roomsList };
       
         // 🔹 Yotoq xonalar soni
-        if (bedsList) match.propertyBeds = { $in: bedsList };
+        if (bedsList && bedsList.length) match.propertyBeds = { $in: bedsList };
       
         // 🔹 Property turi (Uy, Ofis, Bino va hok.)
-        if (typeList) match.propertyType = { $in: typeList };
+        if (typeList && typeList.length) match.propertyType = { $in: typeList };
       
         // 🔹 Narx oralig‘i
         if (pricesRange)
