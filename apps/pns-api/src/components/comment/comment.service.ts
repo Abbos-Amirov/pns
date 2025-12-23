@@ -82,7 +82,7 @@ export class CommentService {
           },
           input,
           { new: true },
-        );
+        ).exec();
       
         if (!result)
           throw new InternalServerErrorException(Message.UPDATE_FAILED);
@@ -116,7 +116,7 @@ export class CommentService {
               metaCounter: [{ $count: 'total' }],
             },
           },
-        ]);
+        ]).exec();
       
         if (!result.length)
           throw new InternalServerErrorException(Message.NO_DATA_FOUND);
@@ -127,7 +127,7 @@ export class CommentService {
       public async removeCommentByAdmin(
         input: ObjectId
       ): Promise<Comment> {
-        const result = await this.commentModel.findByIdAndDelete(input);
+        const result = await this.commentModel.findByIdAndDelete(input).exec();
       
         if (!result) {
           throw new InternalServerErrorException(Message.REMOVE_FAILED);
