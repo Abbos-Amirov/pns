@@ -9,9 +9,12 @@ import { ComponentsModule } from './components/components.module';
 import { DatabaseModule } from './database/database.module';
 import { T } from './libs/types/common';
 import { SocketModule } from './components/socket/socket.module';
+import { AiModule } from './components/ai/ai.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(),
+  imports: [ConfigModule.forRoot({
+    isGlobal: true, // ✅ hamma modulda ConfigService ishlaydi
+    envFilePath: '.env',}),
     GraphQLModule.forRoot({
     driver:ApolloDriver,
     playground: true,
@@ -30,9 +33,11 @@ import { SocketModule } from './components/socket/socket.module';
       return graphQLFormattedError; 
     }
 
+    
+
   
   
-  }), ComponentsModule, DatabaseModule, SocketModule
+  }), ComponentsModule, DatabaseModule, SocketModule,AiModule
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],

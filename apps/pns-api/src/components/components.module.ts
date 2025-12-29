@@ -10,6 +10,7 @@ import { BoardArticleModule } from './board-article/board-article.module';
 import { SocketModule } from './socket/socket.module';
 import { LocationModule } from './location/location.module';
 import { CsModule } from './cs/cs.module';
+import { AiModule } from './ai/ai.module';
 
 
 @Module({
@@ -20,6 +21,6 @@ import { CsModule } from './cs/cs.module';
      LikeModule,
      ViewModule,
      FollowModule, 
-     BoardArticleModule, SocketModule, LocationModule, CsModule],
+     BoardArticleModule, SocketModule, LocationModule, CsModule, AiModule],
 })
 export class ComponentsModule {}
