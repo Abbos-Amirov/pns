@@ -1,0 +1,32 @@
+version: "3.3"
+
+services:
+  pns_api:
+    container_name: pns-api
+    restart: always
+    image: node:20.0.0
+    ports:
+      - "4001:3007"
+    volumes:
+      - ./:/usr/src/pns
+    working_dir: /usr/src/pns
+    networks:
+      - monorepo_network
+    command: bash -c "npm install && npm run build && npm run start:prod"
+
+  pns_batch:
+    container_name: pns-batch
+    restart: unless-stopped
+    image: node:20.0.0
+    ports:
+      - "4002:3008"
+    volumes:
+      - ./:/usr/src/pns
+    working_dir: /usr/src/pns
+    networks:
+      - monorepo_network
+    command: bash -c "npm install && npm run build && npm run start:prod:batch"
+
+networks:
+  monorepo_network:
+    driver: bridge
