@@ -12,7 +12,7 @@ services:
     working_dir: /usr/src/pns
     networks:
       - monorepo_network
-    command: bash -c "npm install && npm run build && npm run start:prod"
+    command: bash -c "rm -rf dist && npm install && npm run build && npm run start:prod"
 
   pns_batch:
     container_name: pns-batch
